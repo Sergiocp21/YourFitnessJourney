@@ -1,4 +1,4 @@
-function MainComponent() {
+function LandingPage() {
     return (
         <div>
             <h1>Esto es la landing</h1>
@@ -6,4 +6,4 @@ function MainComponent() {
     );
 }
 
-export default MainComponent;
+export default LandingPage;

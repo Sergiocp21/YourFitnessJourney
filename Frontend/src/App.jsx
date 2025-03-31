@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import HeaderComponent from './components/Fijos/HeaderComponent';
 import FooterComponent from './components/Fijos/FooterComponent';
-import MainComponent from './components/MainComponent';
+import MainComponent from './components/LandingPage';
 import LoginComponent from './components/Login/LoginComponent';
 import HomeComponent from './components/HomeComponent';
 import PrivateRoute from './components/PrivateRoute';
@@ -28,7 +28,7 @@ function App() {
       <HeaderComponent></HeaderComponent>
       <main className='main-content'>
         <Routes>
-          <Route path="/" element={<MainComponent />} /> {/* Landing page */}
+          <Route path="/" element={<LandingPage />} /> {/* Landing page */}
           <Route path="/login" element={<LoginComponent />} /> {/* Login */}
           <Route path="/home" element={
             <PrivateRoute>
