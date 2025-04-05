@@ -4,14 +4,16 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.your_fitness_journey.backend.Model.User;
 import com.your_fitness_journey.backend.Service.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collections;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/backend")
@@ -61,12 +63,9 @@ public class UserController {
 
             String jwt = authorizationHeader.substring(7); // Remove prefix "Bearer " from the header to get the token);
 
-
-            if (userService.getUserFromJWT(jwt).isPresent()) {
-                return ResponseEntity.ok(userService.getUserFromJWT(jwt).get());
-            } else {
-                return ResponseEntity.status(401).build();  // Unauthorized
-            }
+           Optional<User> userOptional = userService.getUserFromJWT(jwt);
+           // Unauthorized
+           return userOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
        } else {
             return ResponseEntity.badRequest().build();
         }
