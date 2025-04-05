@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.your_fitness_journey.backend.Security.JWT.JwtUtils;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -23,7 +24,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public String loadUser(GoogleIdToken idToken) {
+    public String loginUser(GoogleIdToken idToken) {
         GoogleIdToken.Payload googleUser = idToken.getPayload();
 
         // Get user data
@@ -55,9 +56,19 @@ public class UserService {
 
     public Optional<User> getUserFromJWT(String jwt) {
         if(jwtUtils.validateToken(jwt)){
-            String idUsuario = jwtUtils.getSubjectFromToken(jwt);
-            return userRepository.findByGoogleId(idUsuario);
+            String idUser = jwtUtils.getSubjectFromToken(jwt);
+            return userRepository.findByGoogleId(idUser);
         }
         return Optional.empty();
+    }
+
+    public Optional<User> UpdateUser(String jwt, User userChanges) {
+        String idUser = jwtUtils.getSubjectFromToken(jwt);
+        Optional<User> existingUser = userRepository.findByGoogleId(idUser);
+        if (existingUser.isPresent()) {
+            userChanges.setGoogleId(existingUser.get().getGoogleId());
+            userRepository.save(userChanges);
+        }
+        return existingUser;
     }
 }

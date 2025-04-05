@@ -4,9 +4,9 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import HeaderComponent from './components/Fijos/HeaderComponent';
 import FooterComponent from './components/Fijos/FooterComponent';
 import LandingPage from './components/LandingPage';
-import LoginComponent from './components/Login/LoginComponent';
 import HomeComponent from './components/HomeComponent';
 import PrivateRoute from './components/PrivateRoute';
+import UserInfoComponent from './components/UserInfoComponent';
 import './App.css';
 
 function App() {
@@ -24,17 +24,21 @@ function App() {
   }, [login, navigate]);
 
   return (
-    <div className="app-container">
+    <div className="flex flex-col min-h-screen">
       <HeaderComponent></HeaderComponent>
-      <main className='main-content'>
+      <main className="flex-grow p-8 bg-gray-800 text-white">
         <Routes>
           <Route path="/" element={<LandingPage />} /> {/* Landing page */}
-          <Route path="/login" element={<LoginComponent />} /> {/* Login */}
           <Route path="/home" element={
             <PrivateRoute>
               <HomeComponent />
             </PrivateRoute>
-          } /> {/* Protected route */}
+          } />
+          <Route path="/userInfo" element={
+            <PrivateRoute>
+              <UserInfoComponent />
+            </PrivateRoute>
+          } />
         </Routes>
       </main>
       <FooterComponent></FooterComponent>

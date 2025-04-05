@@ -1,6 +1,7 @@
 package com.your_fitness_journey.backend.Model;
 
 import jakarta.persistence.*;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -25,6 +26,7 @@ public class User {
 
     @Id
     @Column(name = "google_id", nullable = false, length = 50)
+    @JsonIgnore
     private String googleId;
 
     @Column(name = "email", nullable = false, length = 100)
@@ -53,6 +55,11 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<UserRoutine> userRoutines = new LinkedHashSet<>();
+
+
+    public String getGoogleId() {
+        return googleId;
+    }
 
     public String getEmail() {
         return email;
@@ -88,5 +95,25 @@ public class User {
 
     public Set<UserRoutine> getUserRoutines() {
         return userRoutines;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setHeight(BigDecimal height) {
+        this.height = height;
+    }
+
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
     }
 }

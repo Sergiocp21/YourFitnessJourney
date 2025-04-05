@@ -1,14 +1,10 @@
-import React, { useContext } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import { AuthContext } from "../../Auth/AuthContext"; // Import AuthContext
 import { useNavigate } from "react-router-dom";
 
 
 function GoogleLoginButton() {
-    const { login } = useContext(AuthContext); // Access the login function from AuthContext
     const navigate = useNavigate();
-
     const onSuccess = async (credentialResponse) => {
         try {
             const response = await axios.post(
@@ -22,7 +18,7 @@ function GoogleLoginButton() {
             );
             const jwt = response.data; //Receive the JWT from the backend
 
-            login(jwt);
+            window.localStorage.setItem("jwt", jwt);
 
             navigate("/home"); // Redirect to the home page
         } catch (error) {

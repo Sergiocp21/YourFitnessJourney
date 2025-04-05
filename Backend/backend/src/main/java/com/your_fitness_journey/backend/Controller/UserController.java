@@ -6,6 +6,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.your_fitness_journey.backend.Model.User;
+import com.your_fitness_journey.backend.Model.UserNameAndImageDTO;
 import com.your_fitness_journey.backend.Service.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class UserController {
             GoogleIdToken idToken = verifier.verify(credential);
             if (idToken != null) {
 
-               String jwt = userService.loadUser(idToken);
+               String jwt = userService.loginUser(idToken);
 
                return ResponseEntity.ok(jwt);
 
@@ -58,7 +59,7 @@ public class UserController {
 
     @GetMapping("/getUser")
     public ResponseEntity<User> getUser(@RequestHeader("Authorization") String authorizationHeader) {
-        // Verificar si el encabezado Authorization tiene el prefijo "Bearer "
+        // Checks if the header Authorization has the prefix "Bearer "
        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
             String jwt = authorizationHeader.substring(7); // Remove prefix "Bearer " from the header to get the token);
@@ -71,15 +72,35 @@ public class UserController {
         }
     }
 
-    @GetMapping("/login/{pass}")
-    public ResponseEntity<User> easyLogin(@PathVariable String pass) {
-        if(pass.equals("admin")) {
-            User usr = userService.getUser("1");
-            if(usr != null) {
-                return ResponseEntity.ok(usr);
+    @GetMapping("/getUserNameAndImage")
+    public ResponseEntity<UserNameAndImageDTO> getUserNameAndImage(@RequestHeader("Authorization") String authorizationHeader) {
+        // Checks if the header Authorization has the prefix "Bearer "
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+
+            String jwt = authorizationHeader.substring(7); // Remove prefix "Bearer " from the header to get the token);
+
+            Optional<User> userOptional = userService.getUserFromJWT(jwt);
+            if(userOptional.isPresent()) {
+                UserNameAndImageDTO userNameAndImageDTO = new UserNameAndImageDTO(userOptional.get());
+                return ResponseEntity.ok(userNameAndImageDTO);
             }
-            return ResponseEntity.notFound().build();
+            else{
+                return ResponseEntity.status(401).build(); // Unauthorized
+            }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/updateUser")
+    public ResponseEntity<User> updateUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody User userChanges) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String jwt = authorizationHeader.substring(7);
+            Optional<User> userUpdated = userService.UpdateUser(jwt, userChanges);
+            return userUpdated.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
         }
         return ResponseEntity.badRequest().build();
+
     }
+
 }
