@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import HeaderComponent from './components/Fijos/HeaderComponent';
 import FooterComponent from './components/Fijos/FooterComponent';
-import MainComponent from './components/LandingPage';
+import LandingPage from './components/LandingPage';
 import LoginComponent from './components/Login/LoginComponent';
 import HomeComponent from './components/HomeComponent';
 import PrivateRoute from './components/PrivateRoute';
