@@ -41,11 +41,7 @@ public class UserService {
         Optional<User> existingUser = userRepository.findByGoogleId(userId);
 
         if(existingUser.isEmpty()) { // If it doesnt exist, create one user and saves it on the database
-            User newUser = new User();
-            newUser.setGoogleId(userId);
-            newUser.setEmail(email);
-            newUser.setName(name);
-            newUser.setPictureUrl(picture);
+            User newUser = new User(userId, email, name, picture);
             userRepository.save(newUser);
 
         }

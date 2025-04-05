@@ -1,13 +1,9 @@
 package com.your_fitness_journey.backend.Security.JWT;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
 @Component
 @Configuration
 public class JwtConfig {
@@ -20,4 +16,12 @@ public class JwtConfig {
     private String clientId;
 
     private String clientSecret;
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public long getExpiration() {
+        return expiration;
+    }
 }

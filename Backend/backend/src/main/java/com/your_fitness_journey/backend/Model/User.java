@@ -1,21 +1,25 @@
 package com.your_fitness_journey.backend.Model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "users")
 public class User {
 
     public User() {
+        createdAt = Instant.now();
+    }
+
+    public User(String googleId, String email, String name, String picture) {
+        this.googleId = googleId;
+        this.email = email;
+        this.name = name;
+        this.pictureUrl = picture;
         createdAt = Instant.now();
     }
 
@@ -50,4 +54,39 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<UserRoutine> userRoutines = new LinkedHashSet<>();
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public BigDecimal getHeight() {
+        return height;
+    }
+
+    public BigDecimal getWeight() {
+        return weight;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Set<RoutineExercise> getRoutineExercises() {
+        return routineExercises;
+    }
+
+    public Set<Routine> getRoutines() {
+        return routines;
+    }
+
+    public Set<UserRoutine> getUserRoutines() {
+        return userRoutines;
+    }
 }
