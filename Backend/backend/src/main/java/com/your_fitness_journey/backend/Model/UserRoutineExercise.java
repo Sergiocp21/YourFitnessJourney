@@ -6,13 +6,11 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.Instant;
-
 @Getter
 @Setter
 @Entity
-@Table(name = "user_routines")
-public class UserRoutine {
+@Table(name = "user_routine_exercises")
+public class UserRoutineExercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -21,14 +19,19 @@ public class UserRoutine {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "google_id", nullable = false)
-    private User user;
+    private User google;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "routine_id", nullable = false)
     private Routine routine;
 
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "exercise_id", nullable = false)
+    private Exercise exercise;
+
+    @Column(name = "sets")
+    private Integer sets;
 
 }

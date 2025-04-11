@@ -33,10 +33,14 @@ public class Exercise {
     @Column(name = "media_url")
     private String mediaUrl;
 
-    @Column(name = "created_at", nullable = false)
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @OneToMany(mappedBy = "exercise")
-    private Set<RoutineExercise> routineExercises = new LinkedHashSet<>();
+    private Set<com.your_fitness_journey.backend.Model.UserExercise> userExercises = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "exercise")
+    private Set<com.your_fitness_journey.backend.Model.UserRoutineExercise> userRoutineExercises = new LinkedHashSet<>();
 
 }

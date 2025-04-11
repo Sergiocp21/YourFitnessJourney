@@ -24,7 +24,7 @@ public class Routine {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "google_id")
-    private User user;
+    private User google;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
@@ -37,14 +37,11 @@ public class Routine {
     @Column(name = "is_public")
     private Boolean isPublic;
 
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", nullable = false)
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @OneToMany(mappedBy = "routine")
-    private Set<RoutineExercise> routineExercises = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "routine")
-    private Set<com.your_fitness_journey.backend.Model.UserRoutine> userRoutines = new LinkedHashSet<>();
+    private Set<com.your_fitness_journey.backend.Model.UserRoutineExercise> userRoutineExercises = new LinkedHashSet<>();
 
 }
