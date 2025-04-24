@@ -2,14 +2,10 @@ package com.your_fitness_journey.backend.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
-@Getter
-@Setter
 @Embeddable
 public class UserExerciseId implements java.io.Serializable {
     private static final long serialVersionUID = 1364102810668097824L;
@@ -18,6 +14,22 @@ public class UserExerciseId implements java.io.Serializable {
 
     @Column(name = "exercise_id", nullable = false)
     private Long exerciseId;
+
+    public String getGoogleId() {
+        return googleId;
+    }
+
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+
+    public Long getExerciseId() {
+        return exerciseId;
+    }
+
+    public void setExerciseId(Long exerciseId) {
+        this.exerciseId = exerciseId;
+    }
 
     @Override
     public boolean equals(Object o) {
