@@ -1,4 +1,4 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Routines;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
@@ -15,13 +15,21 @@ public class RoutineDay {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "routine_id", nullable = false)
-    private com.your_fitness_journey.backend.Model.Routine routine;
+    private Routine routine;
 
     @Column(name = "day_order", nullable = false)
     private Integer dayOrder;
 
     @Column(name = "day_name", nullable = false, length = 100)
     private String dayName;
+
+    public RoutineDay() {}
+
+    public RoutineDay(Routine routine, int order, String name) {
+        this.routine = routine;
+        this.dayOrder = order;
+        this.dayName = name;
+    }
 
     public Long getId() {
         return id;
@@ -31,11 +39,11 @@ public class RoutineDay {
         this.id = id;
     }
 
-    public com.your_fitness_journey.backend.Model.Routine getRoutine() {
+    public Routine getRoutine() {
         return routine;
     }
 
-    public void setRoutine(com.your_fitness_journey.backend.Model.Routine routine) {
+    public void setRoutine(Routine routine) {
         this.routine = routine;
     }
 

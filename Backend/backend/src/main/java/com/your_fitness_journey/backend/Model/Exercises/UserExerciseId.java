@@ -1,4 +1,4 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Exercises;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -14,6 +14,8 @@ public class UserExerciseId implements java.io.Serializable {
 
     @Column(name = "exercise_id", nullable = false)
     private Long exerciseId;
+
+    public UserExerciseId(){}
 
     public String getGoogleId() {
         return googleId;

@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface IUserRoutineExerciseRepository extends JpaRepository<UserRoutineDayExercise, Integer> {
+public interface IUserRoutineDayExerciseRepository extends JpaRepository<UserRoutineDayExercise, Integer> {
 }

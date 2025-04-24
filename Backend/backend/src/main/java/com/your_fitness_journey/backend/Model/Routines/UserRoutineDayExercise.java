@@ -1,6 +1,7 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Routines;
 
 import com.your_fitness_journey.backend.Model.Exercises.Exercise;
+import com.your_fitness_journey.backend.Model.Users.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,7 +17,7 @@ public class UserRoutineDayExercise {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "google_id", nullable = false)
-    private com.your_fitness_journey.backend.Model.User google;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -31,6 +32,15 @@ public class UserRoutineDayExercise {
     @Column(name = "sets")
     private Integer sets;
 
+    public UserRoutineDayExercise(){}
+
+    public UserRoutineDayExercise(User user, RoutineDay routineDay, Exercise exercise, int numSets) {
+        this.user = user;
+        this.routineDay = routineDay;
+        this.exercise = exercise;
+        this.sets = numSets;
+    }
+
     public Long getId() {
         return id;
     }
@@ -39,12 +49,12 @@ public class UserRoutineDayExercise {
         this.id = id;
     }
 
-    public com.your_fitness_journey.backend.Model.User getGoogle() {
-        return google;
+    public User getUser() {
+        return user;
     }
 
-    public void setGoogle(com.your_fitness_journey.backend.Model.User google) {
-        this.google = google;
+    public void setUser(User google) {
+        this.user = google;
     }
 
     public RoutineDay getRoutineDay() {

@@ -1,4 +1,4 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Exercises;
 
 public enum MuscleGroup {
     PECHO,

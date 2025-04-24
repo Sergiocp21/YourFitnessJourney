@@ -15,46 +15,65 @@ CREATE TABLE exercises (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     muscle_group ENUM(
-        'Pecho',
-        'Espalda',
-        'Piernas',
-        'Brazos',
-        'Hombros',
-        'Cardio',
-        'Otros'
+        'PECHO',
+        'ESPALDA',
+        'PIERNAS',
+        'BRAZOS',
+        'HOMBROS',
+        'CARDIO',
+        'CLASES',
+        'CROSSFIT',
+        'OTROS'
     ),
     media_url VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla de Rutinas
 CREATE TABLE routines (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    google_id VARCHAR(50) NULL, -- Usuario que crea la rutina
+    google_id VARCHAR(50) NULL,
     name VARCHAR(100) NOT NULL,
     description TEXT,
-    is_public BOOLEAN DEFAULT FALSE, -- Si es pública o privada
+    is_public BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (google_id) REFERENCES users (google_id) ON DELETE CASCADE
 );
 
--- Relación entre Usuarios y Ejercicios en Rutinas (con sets planeados)
-CREATE TABLE user_routine_exercises (
+-- Días personalizados dentro de una rutina
+CREATE TABLE routine_days (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    google_id VARCHAR(50) NOT NULL, -- Usuario que personaliza la rutina
-    routine_id BIGINT NOT NULL, -- Rutina asociada
-    exercise_id BIGINT NOT NULL, -- Ejercicio específico
-    sets INT CHECK (sets > 0), -- Número de series planeado
+    routine_id BIGINT NOT NULL,
+    day_order INT NOT NULL,
+    day_name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (routine_id) REFERENCES routines (id) ON DELETE CASCADE
+);
+
+-- Relación entre días de rutina y ejercicios personalizados del usuario
+CREATE TABLE user_routine_day_exercises (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    google_id VARCHAR(50) NOT NULL,
+    routine_day_id BIGINT NOT NULL,
+    exercise_id BIGINT NOT NULL,
+    sets INT CHECK (sets > 0),
     FOREIGN KEY (google_id) REFERENCES users (google_id) ON DELETE CASCADE,
-    FOREIGN KEY (routine_id) REFERENCES routines (id) ON DELETE CASCADE,
+    FOREIGN KEY (routine_day_id) REFERENCES routine_days (id) ON DELETE CASCADE,
     FOREIGN KEY (exercise_id) REFERENCES exercises (id) ON DELETE CASCADE
 );
 
--- Último progreso registrado del usuario para cada ejercicio
-CREATE TABLE user_exercise_progress (
+-- Progreso del usuario en su rutina activa
+CREATE TABLE user_routine_progress (
+    google_id VARCHAR(50) PRIMARY KEY,
+    routine_id BIGINT NOT NULL,
+    current_day_order INT NOT NULL DEFAULT 1,
+    last_completed DATE,
+    FOREIGN KEY (google_id) REFERENCES users (google_id) ON DELETE CASCADE,
+    FOREIGN KEY (routine_id) REFERENCES routines (id) ON DELETE CASCADE
+);
+
+-- Progreso del usuario por ejercicio
+CREATE TABLE user_exercises (
     google_id VARCHAR(50) NOT NULL,
     exercise_id BIGINT NOT NULL,
-    last_sets INT CHECK (last_sets > 0),
     last_reps INT CHECK (last_reps > 0),
     last_weight DECIMAL(5, 2),
     PRIMARY KEY (google_id, exercise_id),

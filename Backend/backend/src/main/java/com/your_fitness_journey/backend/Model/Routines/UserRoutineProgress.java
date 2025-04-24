@@ -1,5 +1,6 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Routines;
 
+import com.your_fitness_journey.backend.Model.Users.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
@@ -18,7 +19,7 @@ public class UserRoutineProgress {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "google_id", nullable = false)
-    private com.your_fitness_journey.backend.Model.User users;
+    private User users;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -32,6 +33,8 @@ public class UserRoutineProgress {
     @Column(name = "last_completed")
     private LocalDate lastCompleted;
 
+    public UserRoutineProgress() {}
+
     public String getGoogleId() {
         return googleId;
     }
@@ -40,11 +43,11 @@ public class UserRoutineProgress {
         this.googleId = googleId;
     }
 
-    public com.your_fitness_journey.backend.Model.User getUsers() {
+    public User getUsers() {
         return users;
     }
 
-    public void setUsers(com.your_fitness_journey.backend.Model.User users) {
+    public void setUsers(User users) {
         this.users = users;
     }
 

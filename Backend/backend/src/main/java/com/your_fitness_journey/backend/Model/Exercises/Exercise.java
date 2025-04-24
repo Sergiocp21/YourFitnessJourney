@@ -1,6 +1,5 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Exercises;
 
-import com.your_fitness_journey.backend.Model.Exercises.MuscleGroup;
 import jakarta.persistence.*;
 
 @Entity

@@ -30,7 +30,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173") // Allow frontend access from localhost
+                        .allowedOrigins("http://localhost:5173", "http://192.168.1.14:5173") // Allow frontend access from localhost
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
@@ -44,7 +44,7 @@ public class SecurityConfig {
         return http
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsVar = new org.springframework.web.cors.CorsConfiguration();
-                    corsVar.setAllowedOrigins(List.of("http://localhost:5173")); // Allow frontend origin
+                    corsVar.setAllowedOrigins(List.of("http://localhost:5173", "http://192.168.1.14:5173")); // Allow frontend origin
                     corsVar.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsVar.setAllowedHeaders(List.of("*"));
                     corsVar.setAllowCredentials(true);
@@ -52,7 +52,7 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/backend/access, /backend/getUser").permitAll() // Allow access to endpoints
+                        .requestMatchers("/backend/access, /backend/").permitAll() // Allow access to endpoints
                         .anyRequest().permitAll()
                 )
                 .build();

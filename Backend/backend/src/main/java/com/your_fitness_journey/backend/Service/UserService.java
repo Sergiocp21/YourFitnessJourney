@@ -1,7 +1,8 @@
 package com.your_fitness_journey.backend.Service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.your_fitness_journey.backend.Model.User;
+import com.your_fitness_journey.backend.Model.Users.UpdateUserInfoDTO;
+import com.your_fitness_journey.backend.Model.Users.User;
 import com.your_fitness_journey.backend.Repository.IUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.your_fitness_journey.backend.Security.JWT.JwtUtils;
 
-import javax.swing.text.html.Option;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Service
@@ -62,12 +63,21 @@ public class UserService {
         return Optional.empty();
     }
 
-    public Optional<User> UpdateUser(String jwt, User userChanges) {
+    public Optional<User> updateUser(String jwt, UpdateUserInfoDTO userChanges) {
         String idUser = jwtUtils.getSubjectFromToken(jwt);
         Optional<User> existingUser = userRepository.findByGoogleId(idUser);
         if (existingUser.isPresent()) {
-            userChanges.setGoogleId(existingUser.get().getGoogleId());
-            userRepository.save(userChanges);
+            if(userChanges.getName() != null && !"".equals(userChanges.getName())) {
+                existingUser.get().setName(userChanges.getName());
+            }
+            if(userChanges.getEmail() != null && !"".equals(userChanges.getEmail())) {
+                existingUser.get().setEmail(userChanges.getEmail());
+            }
+            existingUser.get().setPictureUrl(userChanges.getPictureUrl());
+            existingUser.get().setHeight(new BigDecimal(userChanges.getHeight()));
+            existingUser.get().setWeight(new BigDecimal(userChanges.getWeight()));
+
+            userRepository.save(existingUser.get());
         }
         return existingUser;
     }
