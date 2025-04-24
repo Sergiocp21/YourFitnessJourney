@@ -1,5 +1,6 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Routines;
 
+import com.your_fitness_journey.backend.Model.Users.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
@@ -18,7 +19,7 @@ public class Routine {
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "google_id")
-    private com.your_fitness_journey.backend.Model.User google;
+    private User user;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
@@ -37,6 +38,14 @@ public class Routine {
 
     public Routine(){}
 
+    public Routine(User user, String name, String description, boolean isPublic) {
+        this.user = user;
+        this.name = name;
+        this.description = description;
+        this.isPublic = isPublic;
+        this.createdAt = Instant.now();
+    }
+
     public Long getId() {
         return id;
     }
@@ -45,12 +54,12 @@ public class Routine {
         this.id = id;
     }
 
-    public com.your_fitness_journey.backend.Model.User getGoogle() {
-        return google;
+    public User getUser() {
+        return user;
     }
 
-    public void setGoogle(com.your_fitness_journey.backend.Model.User google) {
-        this.google = google;
+    public void setUser(User google) {
+        this.user = google;
     }
 
     public String getName() {

@@ -4,8 +4,8 @@ Backend/.idea
 
 Bibliografia.txt
 Casas a tener en cuenta.txt
-Cosas a tener en cuenta.txt
 Frontend/eslint.config.js
 Frontend/package-lock.json
 Frontend/README.md
-Frontend/src/components/Routines/HomeRoutines.jsx
+HistorialBD
+ERD.txt

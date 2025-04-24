@@ -1,4 +1,4 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Users;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +34,17 @@ public class User {
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "created_at")
     private Instant createdAt;
+
+    public User() {}
+
+    public User(String googleId, String email, String name, String picture) {
+        this.googleId = googleId;
+        this.email = email;
+        this.name = name;
+        this.pictureUrl = picture;
+        this.createdAt = Instant.now();
+    }
+
 
     public String getGoogleId() {
         return googleId;

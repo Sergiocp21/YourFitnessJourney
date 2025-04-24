@@ -8,7 +8,7 @@ function GoogleLoginButton() {
     const onSuccess = async (credentialResponse) => {
         try {
             const response = await axios.post(
-                "http://localhost:8080/backend/access",
+                "http://localhost:8080/users/access",
                 credentialResponse.credential,
                 {
                     headers: {

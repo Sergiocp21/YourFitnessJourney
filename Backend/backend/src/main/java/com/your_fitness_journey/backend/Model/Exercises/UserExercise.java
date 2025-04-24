@@ -1,6 +1,6 @@
-package com.your_fitness_journey.backend.Model;
+package com.your_fitness_journey.backend.Model.Exercises;
 
-import com.your_fitness_journey.backend.Model.Exercises.Exercise;
+import com.your_fitness_journey.backend.Model.Users.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -17,7 +17,7 @@ public class UserExercise {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "google_id", nullable = false)
-    private com.your_fitness_journey.backend.Model.User google;
+    private User google;
 
     @MapsId("exerciseId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -31,6 +31,8 @@ public class UserExercise {
     @Column(name = "last_weight", precision = 5, scale = 2)
     private BigDecimal lastWeight;
 
+    public UserExercise(){}
+
     public UserExerciseId getId() {
         return id;
     }
@@ -39,11 +41,11 @@ public class UserExercise {
         this.id = id;
     }
 
-    public com.your_fitness_journey.backend.Model.User getGoogle() {
+    public User getGoogle() {
         return google;
     }
 
-    public void setGoogle(com.your_fitness_journey.backend.Model.User google) {
+    public void setGoogle(User google) {
         this.google = google;
     }
 

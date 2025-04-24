@@ -5,8 +5,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
-import com.your_fitness_journey.backend.Model.User;
-import com.your_fitness_journey.backend.Model.UserNameAndImageDTO;
+import com.your_fitness_journey.backend.Model.Users.UpdateUserInfoDTO;
+import com.your_fitness_journey.backend.Model.Users.User;
+import com.your_fitness_journey.backend.Model.Users.UserNameAndImageDTO;
 import com.your_fitness_journey.backend.Service.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/backend")
+@RequestMapping("/users")
 public class UserController {
 
     UserService userService;
@@ -93,13 +94,14 @@ public class UserController {
     }
 
     @PostMapping("/updateUser")
-    public ResponseEntity<User> updateUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody User userChanges) {
+    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody UpdateUserInfoDTO userChanges) {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String jwt = authorizationHeader.substring(7);
-            Optional<User> userUpdated = userService.UpdateUser(jwt, userChanges);
+            Optional<User> userUpdated = userService.updateUser(jwt, userChanges);
             return userUpdated.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
         }
-        return ResponseEntity.badRequest().build();
+        System.out.println("hola");
+        return ResponseEntity.status(401).body("Token not found");
 
     }
 

@@ -7,7 +7,7 @@ import LandingPage from './components/LandingPage';
 import HomeComponent from './components/HomeComponent';
 import PrivateRoute from './components/PrivateRoute';
 import UserInfoComponent from './components/UserInfoComponent';
-import './App.css';
+import HomeRoutines from './components/Routines/HomeRoutines';
 
 function App() {
   const { login } = useContext(AuthContext);
@@ -24,7 +24,7 @@ function App() {
   }, [login, navigate]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-hidden">
       <HeaderComponent></HeaderComponent>
       <main className="flex-grow p-8 bg-gray-800 text-white">
         <Routes>
@@ -39,6 +39,7 @@ function App() {
               <UserInfoComponent />
             </PrivateRoute>
           } />
+          <Route path='/routines' element={<HomeRoutines />} />
         </Routes>
       </main>
       <FooterComponent></FooterComponent>
