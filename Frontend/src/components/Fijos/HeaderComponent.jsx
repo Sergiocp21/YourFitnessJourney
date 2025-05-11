@@ -110,7 +110,7 @@ function Header() {
                 <div className="relative">
                     <button
                         onClick={handleUserClick}
-                        className="bg-blue-500 text-white px-4 py-2 rounded flex items-center"
+                        className="bg-gray-700 text-white px-4 py-2 rounded flex items-center hover:bg-gradient-to-br from-red-800 via-gray-500 to-black cursor-pointer"
                     >
                         {userData?.username && (
                             <div className="flex items-center">
@@ -126,7 +126,7 @@ function Header() {
                     {userDropdownVisible && (
                         <div
                             ref={userDropdownRef}
-                            className="absolute top-12 right-0 bg-black text-white p-4 rounded-lg shadow-lg w-48"
+                            className="absolute top-12 right-0 bg-black text-white p-4 rounded-lg shadow-lg w-48 z-50"
                         >
                             <button
                                 className="bg-gray-900 text-white px-4 py-2 rounded w-full mb-2"

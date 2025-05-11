@@ -1,5 +1,6 @@
 export class RoutineDTO {
-    constructor(name, description, isPublic, days) {
+    constructor(routineId, name, description, isPublic, days) {
+        this.routineId = routineId;
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
@@ -8,6 +9,7 @@ export class RoutineDTO {
             name: day.name,
             exercises: day.exercises.map((ex) => ({
                 id: ex.id,
+                name: ex.name,
                 sets: ex.sets,
             })),
         }));

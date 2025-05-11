@@ -9,5 +9,6 @@ public enum MuscleGroup {
     CARDIO,
     CLASES,
     CROSSFIT,
+    ABS,
     OTROS;
 }

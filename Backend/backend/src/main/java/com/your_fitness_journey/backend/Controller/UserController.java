@@ -105,4 +105,16 @@ public class UserController {
 
     }
 
+    @GetMapping("/validateToken")
+    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String jwt = authorizationHeader.substring(7);
+            Optional<User> userOptional = userService.getUserFromJWT(jwt);
+            if(userOptional.isPresent()) {
+                return ResponseEntity.ok(true);
+            }
+        }
+        return ResponseEntity.ok(false);
+    }
+
 }

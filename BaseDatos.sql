@@ -23,6 +23,7 @@ CREATE TABLE exercises (
         'CARDIO',
         'CLASES',
         'CROSSFIT',
+        'ABS',
         'OTROS'
     ),
     media_url VARCHAR(255),

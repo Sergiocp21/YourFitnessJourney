@@ -102,13 +102,13 @@ const ExerciseSelector = ({ onSelect }) => {
                 {/* Scroll horizontal */}
                 <div
                     ref={scrollRef}
-                    className="flex overflow-x-auto gap-2 w-full scroll-smooth scrollbar-hide justify-start"
+                    className="flex overflow-x-auto gap-2 w-full scroll-smooth scrollbar-hide justify-start sm:justify-center"
                 >
                     {muscleGroups.map((group) => (
                         <div
                             key={group}
                             onClick={() => setSelectedGroup(group)}
-                            className={`whitespace-nowrap cursor-pointer py-2 px-4 border rounded ${selectedGroup === group
+                            className={`whitespace-nowrap cursor-pointer py-2 px-4 border rounded  ${selectedGroup === group
                                 ? "bg-blue-500 text-white"
                                 : "bg-white text-black"
                                 }`}

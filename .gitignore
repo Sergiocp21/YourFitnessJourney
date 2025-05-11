@@ -1,11 +1,12 @@
 Backend/.idea
-
+Frontend/.vscode
 *.env
 
 Bibliografia.txt
-Casas a tener en cuenta.txt
+CosasATenerEnCuenta.txt
 Frontend/eslint.config.js
 Frontend/package-lock.json
 Frontend/README.md
 HistorialBD
 ERD.txt
+Frontend/assets

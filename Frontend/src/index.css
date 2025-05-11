@@ -1,15 +1,24 @@
 @import "tailwindcss";
 
 @tailwind utilities;
+@plugin "@midudev/tailwind-animations";
 
-body{
-    overflow-x: hidden;
+@theme {
+  /*Esto es para crear variables empieza con '--'*/
+}
+
+.button {
+  @apply bg-black text-white rounded hover:bg-gradient-to-r from-black via-gray-900 to-black transition active:bg-gradient-to-r from-black via-gray-900 to-black transition;
+}
+
+body {
+  overflow-x: hidden;
 }
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -26,7 +26,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       <HeaderComponent></HeaderComponent>
-      <main className="flex-grow p-8 bg-gray-800 text-white">
+      <main className="flex-grow p-8 bg-gradient-to-b from-red-800 via-gray-900 to-black text-white">
         <Routes>
           <Route path="/" element={<LandingPage />} /> {/* Landing page */}
           <Route path="/home" element={
@@ -39,7 +39,11 @@ function App() {
               <UserInfoComponent />
             </PrivateRoute>
           } />
-          <Route path='/routines' element={<HomeRoutines />} />
+          <Route path='/routines' element={
+            <PrivateRoute>
+              <HomeRoutines />
+            </PrivateRoute>
+          } />
         </Routes>
       </main>
       <FooterComponent></FooterComponent>

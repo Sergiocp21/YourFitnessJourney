@@ -1,27 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddDayComponent from "./AddDayComponent";
-import { saveRoutine } from "../../../api";
+import { saveRoutine, updateRoutine } from "../../../api";
 import { RoutineDTO } from "../../../Dtos/RoutinesDTO";
 
-const CreateRoutineComponent = () => {
-    const [days, setDays] = useState([]);
-    const [dayCounter, setDayCounter] = useState(0);
+const CreateRoutineComponent = ({ goBack, initialRoutine, setView }) => {
 
-    const [routineName, setRoutineName] = useState("");
-    const [description, setDescription] = useState("");
-    const [isPublic, setIsPublic] = useState(false);
+    const [days, setDays] = useState(initialRoutine?.days || []);
+
+    const [routineName, setRoutineName] = useState(initialRoutine?.name || "");
+    const [description, setDescription] = useState(initialRoutine?.description || "");
+    const [isPublic, setIsPublic] = useState(initialRoutine?.isPublic || false);
+
+
+    useEffect(() => {
+        if (initialRoutine) {
+            const loadedDays = initialRoutine.days.map((day) => ({
+                ...day,
+                id: crypto.randomUUID(), // ID local único
+            }));
+            setDays(loadedDays);
+            setRoutineName(initialRoutine.name);
+            setDescription(initialRoutine.description);
+            setIsPublic(initialRoutine.isPublic);
+        }
+    }, [initialRoutine]);
+
 
     const jwt = window.localStorage.getItem("jwt");
 
     const addDay = () => {
         const newDay = {
-            id: dayCounter,
+            id: crypto.randomUUID(),
             name: "",
             exercises: [],
         };
 
         setDays((prevDays) => [...prevDays, newDay]);
-        setDayCounter((prevCounter) => prevCounter + 1);
     };
 
     const updateDay = (updatedDay) => {
@@ -36,6 +50,7 @@ const CreateRoutineComponent = () => {
 
     const handleSaveRoutine = async () => {
         const routine = new RoutineDTO(
+            initialRoutine?.routineId || 0,
             routineName,
             description,
             isPublic,
@@ -43,12 +58,17 @@ const CreateRoutineComponent = () => {
         );
 
         try {
-            console.log("Authorization Header:", `Bearer ${jwt}`);
-            await saveRoutine(routine, jwt);
-            console.log(routine);
-            alert("Rutina guardada con éxito");
+            if (initialRoutine) {
+                console.log(routine);
+                await updateRoutine(routine, jwt);
+                alert("Rutina actualizada con éxito");
+                setView("my");
+            } else {
+                await saveRoutine(routine, jwt);
+                alert("Rutina guardada con éxito");
+                setView("my");
+            }
         } catch (error) {
-            console.log(routine);
             console.error("Error al guardar rutina:", error);
             alert("Hubo un error al guardar la rutina.");
         }
@@ -111,6 +131,7 @@ const CreateRoutineComponent = () => {
                     </button>
                 </div>
             )}
+            <button className="btn mt-4 float-right" onClick={goBack}>Volver al menú</button>
         </div>
     );
 };

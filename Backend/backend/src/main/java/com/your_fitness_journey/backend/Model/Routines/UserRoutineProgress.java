@@ -15,6 +15,9 @@ public class UserRoutineProgress {
     @Column(name = "google_id", nullable = false, length = 50)
     private String googleId;
 
+    @Version
+    private Long version;
+
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

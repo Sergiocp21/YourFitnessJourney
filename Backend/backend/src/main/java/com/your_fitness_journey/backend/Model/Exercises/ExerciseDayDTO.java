@@ -18,4 +18,16 @@ public class ExerciseDayDTO {
     public List<ExerciseInfoDTO> getExercises() {
         return exercises;
     }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setExercises(List<ExerciseInfoDTO> exercises) {
+        this.exercises = exercises;
+    }
 }

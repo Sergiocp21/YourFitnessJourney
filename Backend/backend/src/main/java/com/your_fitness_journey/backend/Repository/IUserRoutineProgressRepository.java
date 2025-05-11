@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IUserRoutineProgressRepository extends JpaRepository<UserRoutineProgress, String> {
+    UserRoutineProgress findByGoogleId(String googleId);
 }
