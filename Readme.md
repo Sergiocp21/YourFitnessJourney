@@ -1,5 +1,5 @@
 # Work in progress
-
+Documentation [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Sergiocp21/YourFitnessJourney)
 ## Last update
 
 Now you can create custom routines
