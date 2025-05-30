@@ -3,9 +3,11 @@ package com.your_fitness_journey.backend.Repository;
 import com.your_fitness_journey.backend.Model.Routines.Routine;
 import com.your_fitness_journey.backend.Model.Routines.RoutineDay;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IRoutineDayRepository extends JpaRepository<RoutineDay, Long> {
@@ -13,5 +15,8 @@ public interface IRoutineDayRepository extends JpaRepository<RoutineDay, Long> {
 
     void deleteById(Long id);
 
-    List<RoutineDay> findRoutineDayByRoutine(Routine routine);
+    Optional<RoutineDay> findByRoutineAndDayOrder(Routine routine, Integer currentDayOrder);
+
+    @Query("select max(rd.dayOrder) from RoutineDay rd where rd.routine = :routine")
+    int findMaxDayByRoutine(Routine routine);
 }

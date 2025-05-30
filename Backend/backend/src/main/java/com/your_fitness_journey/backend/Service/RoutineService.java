@@ -3,17 +3,16 @@ package com.your_fitness_journey.backend.Service;
 import com.your_fitness_journey.backend.Model.Exercises.Exercise;
 import com.your_fitness_journey.backend.Model.Exercises.ExerciseDayDTO;
 import com.your_fitness_journey.backend.Model.Exercises.ExerciseInfoDTO;
+import com.your_fitness_journey.backend.Model.Exercises.UserExercise;
 import com.your_fitness_journey.backend.Model.Routines.UserRoutineDayExercise;
 import com.your_fitness_journey.backend.Model.Routines.*;
 import com.your_fitness_journey.backend.Model.Users.User;
-import com.your_fitness_journey.backend.Repository.IRoutineDayRepository;
-import com.your_fitness_journey.backend.Repository.IRoutineRepository;
-import com.your_fitness_journey.backend.Repository.IUserRoutineDayExerciseRepository;
-import com.your_fitness_journey.backend.Repository.IUserRoutineProgressRepository;
+import com.your_fitness_journey.backend.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,16 +46,16 @@ public class RoutineService {
             for(ExerciseInfoDTO exerciseInfoDTO : exerciseDayDTO.getExercises()) { //Exercise by exercise
                 Optional<Exercise> optionalExercise = exerciseService.getExerciseById(exerciseInfoDTO.getExerciseId());
                 if(optionalExercise.isPresent()) {
-                    UserRoutineDayExercise exerciseDay = new UserRoutineDayExercise(user, routineDay, optionalExercise.get(), exerciseInfoDTO.getNumSets());
+                    UserRoutineDayExercise exerciseDay = new UserRoutineDayExercise(user, routineDay, optionalExercise.get(), exerciseInfoDTO.getNumSets(), exerciseInfoDTO.getOrder());
                     routineRepository.save(routine);
                     routineDayRepository.save(routineDay);
                     userRoutineDayExerciseRepository.save(exerciseDay);
                     exercisesPerDay.add(exerciseDay);
+
                 }
                 else{
                     return new HashSet<>();
                 }
-
             }
 
         }
@@ -64,7 +63,73 @@ public class RoutineService {
         return exercisesPerDay;
     }
 
-    @Transactional
+    public List<ExerciseDayDTO> getActiveRoutine(User user) {
+        UserRoutineProgress progress = userRoutineProgressRepository.findById(user.getGoogleId())
+                .orElseThrow(() -> new RuntimeException("No hay rutina activa para el usuario"));
+
+        List<RoutineDay> days = routineDayRepository.getRoutineDayByRoutine_Id(progress.getRoutine().getId());
+
+        return days.stream()
+                .map(day -> {
+                    ExerciseDayDTO dto = new ExerciseDayDTO();
+                    dto.setOrder(day.getDayOrder());
+                    dto.setName(day.getDayName());
+                    return dto;
+                })
+                .sorted(Comparator.comparing(ExerciseDayDTO::getOrder))
+                .collect(Collectors.toList());
+    }
+
+    public ExerciseDayDTO getTodayExercises(User user) {
+        UserRoutineProgress activeRoutine = getUserActiveRoutine(user) //User active routine
+                .orElseThrow(() -> new RuntimeException("No hay rutina activa"));
+
+        RoutineDay routineDay = routineDayRepository
+                .findByRoutineAndDayOrder(activeRoutine.getRoutine(), activeRoutine.getCurrentDayOrder())
+                .orElseThrow(() -> new RuntimeException("No se encontró el día actual de la rutina"));
+
+        List<UserRoutineDayExercise> exercisesToday = userRoutineDayExerciseRepository.findUserRoutineDayExercisesByRoutineDayOrderByExerciseOrder(routineDay); //Today of active routine
+
+        if (exercisesToday.isEmpty()) {
+            throw new RuntimeException("No hay ejercicios asignados para el día actual");
+        }
+
+        ExerciseDayDTO exerciseDayDTO = new ExerciseDayDTO();
+        exerciseDayDTO.setName(routineDay.getDayName());
+        exerciseDayDTO.setOrder(routineDay.getDayOrder());
+
+        List<ExerciseInfoDTO> exerciseInfoList = new ArrayList<>();
+
+        for (UserRoutineDayExercise entry : exercisesToday) {
+            Exercise exercise = entry.getExercise();
+
+            Optional<UserExercise> optionalUserExercise = exerciseService.getUserExercise(user, exercise);
+
+            UserExercise userEx = optionalUserExercise.orElseGet(() -> { //Inserts in the database the relationship between user and exercise
+                UserExercise newUserExercise = new UserExercise(user, exercise, null, 0);
+                return exerciseService.saveUserExercise(newUserExercise);
+            });
+
+            ExerciseInfoDTO dto = new ExerciseInfoDTO();
+            dto.setExerciseId(exercise.getId());
+            dto.setName(exercise.getName());
+            dto.setNumSets(entry.getSets());
+            dto.setOrder(entry.getExerciseOrder());
+            dto.setReps(userEx.getLastReps());
+            dto.setWeight(userEx.getLastWeight());
+            dto.setNotes(userEx.getExerciseNote());
+
+            exerciseInfoList.add(dto);
+        }
+
+        exerciseDayDTO.setExercises(exerciseInfoList);
+        return exerciseDayDTO;
+    }
+
+    private Optional<UserRoutineProgress> getUserActiveRoutine(User user) {
+        return userRoutineProgressRepository.findById(user.getGoogleId());
+    }
+
     public List<FullRoutineInfoDTO> getRoutinesForFrontend(List<Routine> routines) {
         if(!routines.isEmpty()){
             List<FullRoutineInfoDTO> routinesDTO = new ArrayList<>();
@@ -83,7 +148,7 @@ public class RoutineService {
                     exerciseDayDTO.setOrder(routineDay.getDayOrder());
                     exerciseDayDTO.setName(routineDay.getDayName());
 
-                    List<UserRoutineDayExercise> userRoutineDayExercises = userRoutineDayExerciseRepository.getUserRoutineDayExercisesByRoutineDay_Id(routineDay.getId());
+                    List<UserRoutineDayExercise> userRoutineDayExercises = userRoutineDayExerciseRepository.getUserRoutineDayExercisesByRoutineDay_IdOrderByExerciseOrderAsc(routineDay.getId());
                     List<ExerciseInfoDTO> infoExercisesList = new ArrayList<>();
                     for(UserRoutineDayExercise userRoutineDayExercise : userRoutineDayExercises ) {
                         ExerciseInfoDTO exerciseInfoDTO = new ExerciseInfoDTO();
@@ -139,10 +204,6 @@ public class RoutineService {
         Map<Integer, RoutineDay> dayOrderMap = existingDays.stream()
                 .collect(Collectors.toMap(RoutineDay::getDayOrder, d -> d));
 
-        Set<Long> existingDayIds = existingDays.stream()
-                .map(RoutineDay::getId)
-                .collect(Collectors.toSet());
-
         Set<Long> updatedDayIds = new HashSet<>();
 
         for (ExerciseDayDTO dayDTO : routineInfo.getExerciseDays()) {
@@ -159,7 +220,7 @@ public class RoutineService {
             updatedDayIds.add(day.getId());
 
             //Update exercises
-            List<UserRoutineDayExercise> existingExercises = userRoutineDayExerciseRepository.getUserRoutineDayExercisesByRoutineDay_Id(day.getId());
+            List<UserRoutineDayExercise> existingExercises = userRoutineDayExerciseRepository.getUserRoutineDayExercisesByRoutineDay_IdOrderByExerciseOrderAsc(day.getId());
 
             Map<Long, UserRoutineDayExercise> existingExerciseMap = existingExercises.stream()
                     .collect(Collectors.toMap(e -> e.getExercise().getId(), e -> e));
@@ -219,7 +280,7 @@ public class RoutineService {
                     activeRoutine.setGoogleId(user.getGoogleId());
                 }
                 activeRoutine.setRoutine(routine.get());
-                activeRoutine.setCurrentDayOrder(0);
+                activeRoutine.setCurrentDayOrder(1);
                 activeRoutine.setLastCompleted(null);
 
                 userRoutineProgressRepository.save(activeRoutine);
@@ -248,11 +309,12 @@ public class RoutineService {
     }
 
 
+    @Transactional
     public Routine deleteRoutine(long routineId, User user) {
         Optional<Routine> routine = routineRepository.findById(routineId);
         if(routine.isPresent()) {
-            Optional<UserRoutineProgress> userActiveRoutine = Optional.ofNullable(userRoutineProgressRepository.findByGoogleId(user.getGoogleId()));
-            if( userActiveRoutine.isEmpty() || userActiveRoutine.get().getRoutine().getId() != routineId){ //Checks if the routine that is going to be deleted is active or not
+            Optional<UserRoutineProgress> userActiveRoutine = userRoutineProgressRepository.findById(user.getGoogleId());
+            if(userActiveRoutine.isEmpty() || userActiveRoutine.get().getRoutine().getId() != routineId){ //Checks if the routine that is going to be deleted is active or not
                 userRoutineDayExerciseRepository.deleteById(routineId);
                 routineDayRepository.deleteById(routineId);
                 routineRepository.deleteById(routineId);
@@ -265,5 +327,53 @@ public class RoutineService {
         else{
             return null;
         }
+    }
+
+    @Transactional
+    public void changeActiveDay(User user, int newDayOrder) {
+        UserRoutineProgress progress = userRoutineProgressRepository.findById(user.getGoogleId())
+                .orElseThrow(() -> new RuntimeException("No hay rutina activa para el usuario"));
+
+        Routine routine = progress.getRoutine();
+        List<RoutineDay> days = routineDayRepository.getRoutineDayByRoutine_Id(routine.getId());
+
+        boolean dayExists = days.stream().anyMatch(d -> d.getDayOrder() == newDayOrder);
+        if (!dayExists) {
+            throw new IllegalArgumentException("Día no válido para esta rutina");
+        }
+
+        progress.setCurrentDayOrder(newDayOrder);
+        userRoutineProgressRepository.save(progress);
+    }
+
+    public boolean updateTodayWorkout(User user, ExerciseDayDTO exerciseDayDTO) {
+        UserRoutineProgress userRoutineProgress = userRoutineProgressRepository.findById(user.getGoogleId()).get();
+        int maxRoutineDays = routineDayRepository.findMaxDayByRoutine(userRoutineProgress.getRoutine());
+        int currentDay = userRoutineProgress.getCurrentDayOrder();
+
+        //Next training day
+        if( currentDay + 1 > maxRoutineDays){
+            userRoutineProgress.setCurrentDayOrder(1);
+        }
+        else{
+            userRoutineProgress.setCurrentDayOrder(currentDay + 1);
+        }
+        userRoutineProgress.setLastCompleted(LocalDate.now());
+        userRoutineProgressRepository.save(userRoutineProgress);
+
+        //Update user exercises
+        RoutineDay routineDay = routineDayRepository.findByRoutineAndDayOrder(userRoutineProgress.getRoutine(), currentDay)
+                .orElseThrow(() -> new RuntimeException("Dia de rutina no encontrado"));
+        List <UserRoutineDayExercise> userRoutineDayExercises = userRoutineDayExerciseRepository.findUserRoutineDayExercisesByRoutineDayOrderByExerciseOrder(routineDay); //Today exercises
+        int exerciseOrder = 0;
+        //TODO Mejorar esto pasando el id del ejercicio al frontEnd a la hora de realizar el ejercicio e iterar por exerciseDayDTO
+        for(UserRoutineDayExercise userRoutineDayExercise : userRoutineDayExercises){
+            ExerciseInfoDTO exerciseInfoDTO = exerciseDayDTO.getExercises().get(exerciseOrder);
+            if(!exerciseService.updateUserExercise(userRoutineDayExercise.getUser(), userRoutineDayExercise.getExercise(), exerciseInfoDTO.getWeight(), exerciseInfoDTO.getReps(), exerciseInfoDTO.getNotes())){
+                return false;
+            }
+            exerciseOrder++;
+        }
+        return true;
     }
 }

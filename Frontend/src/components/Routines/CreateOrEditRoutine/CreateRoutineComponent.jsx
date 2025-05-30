@@ -2,18 +2,19 @@ import { useState, useEffect } from "react";
 import AddDayComponent from "./AddDayComponent";
 import { saveRoutine, updateRoutine } from "../../../api";
 import { RoutineDTO } from "../../../Dtos/RoutinesDTO";
+import { useNotification } from "../../Notifications/useNotification";
 
 const CreateRoutineComponent = ({ goBack, initialRoutine, setView }) => {
 
     const [days, setDays] = useState(initialRoutine?.days || []);
-
     const [routineName, setRoutineName] = useState(initialRoutine?.name || "");
     const [description, setDescription] = useState(initialRoutine?.description || "");
     const [isPublic, setIsPublic] = useState(initialRoutine?.isPublic || false);
-
+    const { notify } = useNotification();
 
     useEffect(() => {
         if (initialRoutine) {
+            console.log(initialRoutine);
             const loadedDays = initialRoutine.days.map((day) => ({
                 ...day,
                 id: crypto.randomUUID(), // ID local único
@@ -21,7 +22,7 @@ const CreateRoutineComponent = ({ goBack, initialRoutine, setView }) => {
             setDays(loadedDays);
             setRoutineName(initialRoutine.name);
             setDescription(initialRoutine.description);
-            setIsPublic(initialRoutine.isPublic);
+            setIsPublic(false);
         }
     }, [initialRoutine]);
 
@@ -61,16 +62,16 @@ const CreateRoutineComponent = ({ goBack, initialRoutine, setView }) => {
             if (initialRoutine) {
                 console.log(routine);
                 await updateRoutine(routine, jwt);
-                alert("Rutina actualizada con éxito");
+                notify("Rutina actualizada con éxito", "success");
                 setView("my");
             } else {
                 await saveRoutine(routine, jwt);
-                alert("Rutina guardada con éxito");
+                notify("Rutina guardada con éxito", "success");
                 setView("my");
             }
         } catch (error) {
             console.error("Error al guardar rutina:", error);
-            alert("Hubo un error al guardar la rutina.");
+            notify("Hubo un error al guardar la rutina.", "error");
         }
     };
 

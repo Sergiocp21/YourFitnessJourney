@@ -1,6 +1,5 @@
 import { useState } from "react";
 import UserRoutinesComponent from "./UserRoutinesComponent";
-import PredefinedRoutinesComponent from "./PredefinedRoutinesComponent";
 import PublicRoutinesComponent from "./PublicRoutinesComponent";
 import CreateRoutineComponent from "./CreateOrEditRoutine/CreateRoutineComponent";
 function HomeRoutines() {
@@ -22,8 +21,6 @@ function HomeRoutines() {
                     />
                 );
 
-            case 'predefined':
-                return <PredefinedRoutinesComponent goBack={goBack} />;
             case 'public':
                 return <PublicRoutinesComponent goBack={goBack} setView={setView} />;
             case 'create':
@@ -35,7 +32,6 @@ function HomeRoutines() {
                     <div className="flex flex-col items-center gap-4 overflow-hidden w-full">
                         <h2 className="text-xl font-bold mb-4">Selecciona una categoría de rutinas</h2>
                         <button className="px-4 py-2 button" onClick={() => setView('my')}>Tus rutinas</button>
-                        <button className="px-4 py-2 button" onClick={() => setView('predefined')}>Predefinidas</button>
                         <button className="px-4 py-2 button" onClick={() => setView('public')}>Rutinas públicas</button>
                         <button className="px-4 py-2 button" onClick={() => setView('create')}>Crear rutina</button>
                     </div>

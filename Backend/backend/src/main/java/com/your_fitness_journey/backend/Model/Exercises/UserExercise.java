@@ -17,7 +17,7 @@ public class UserExercise {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "google_id", nullable = false)
-    private User google;
+    private User user;
 
     @MapsId("exerciseId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -31,7 +31,19 @@ public class UserExercise {
     @Column(name = "last_weight", precision = 5, scale = 2)
     private BigDecimal lastWeight;
 
+    @Column(name = "exercise_note")
+    private String exerciseNote;
+
     public UserExercise(){}
+
+    public UserExercise(User user, Exercise exercise, BigDecimal weight, int reps) {
+        this.user = user;
+        this.exercise = exercise;
+        this.id = new UserExerciseId(user.getGoogleId(), exercise.getId());
+        this.lastWeight = weight;
+        this.lastReps = reps;
+        this.exerciseNote = "";
+    }
 
     public UserExerciseId getId() {
         return id;
@@ -41,12 +53,12 @@ public class UserExercise {
         this.id = id;
     }
 
-    public User getGoogle() {
-        return google;
+    public User getUser() {
+        return user;
     }
 
-    public void setGoogle(User google) {
-        this.google = google;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Exercise getExercise() {
@@ -73,4 +85,11 @@ public class UserExercise {
         this.lastWeight = lastWeight;
     }
 
+    public String getExerciseNote() {
+        return exerciseNote;
+    }
+
+    public void setExerciseNote(String exerciseNote) {
+        this.exerciseNote = exerciseNote;
+    }
 }

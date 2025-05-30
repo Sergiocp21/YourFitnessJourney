@@ -164,4 +164,67 @@ export const updateRoutine = async (routineDTO, token) => {
         });
 }
 
+export const getTodayExercises = async (token) => {
+    return api.get("/routine/getTodayExercises", {
+        headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+        }
+    }).then(res => res.data)
+        .catch(error => {
+            console.error("Error fetching today's exercises:", error);
+            throw new Error("Error fetching today's exercises");
+        });
+}
+
+export const updateWorkoutProgress = async (routineDayDTO, token) => {
+    try {
+        const response = await api.put("/routine/updateTodayWorkout", routineDayDTO, {
+            headers: {
+                Authorization: token ? `Bearer ${token}` : "",
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error updating workout progress:", error);
+        throw new Error("Error updating workout progress");
+    }
+}
+
+
+
+export const getActiveRoutineDays = async (token) => {
+    return api.get("/routine/getActiveRoutineDays", {
+        headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+        }
+    }).then(res => res.data)
+        .catch(error => {
+            console.error("Error fetching active routine days:", error);
+            throw new Error("Error fetching active routine days");
+        });
+}
+
+export const changeActiveDay = async (dayOrder, token) => {
+    return api.put(`/routine/changeActiveDay/${dayOrder}`, {}, {
+        headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+        }
+    }).then(res => res.data)
+        .catch(error => {
+            console.error("Error changing active day:", error);
+            throw new Error("Error changing active day");
+        });
+}
+
+export const getUserCount = async () => {
+    return api.get("/users/getUserCount")
+        .then(res => res.data)
+        .catch(error => {
+            console.error("Error fetching user count:", error);
+            throw new Error("Error fetching user count");
+        });
+}
+
+
+
 

@@ -6,6 +6,10 @@ import com.your_fitness_journey.backend.Model.Users.User;
 import com.your_fitness_journey.backend.Repository.IUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.your_fitness_journey.backend.Security.JWT.JwtUtils;
@@ -18,11 +22,13 @@ public class UserService {
 
     private final JwtUtils jwtUtils;
     private final IUserRepository userRepository;
+    private long cachedUserCount = 0;
 
     @Autowired
     public UserService(IUserRepository userRepository, JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
         this.userRepository = userRepository;
+        refreshUserCount();
     }
 
     public String loginUser(GoogleIdToken idToken) {
@@ -45,14 +51,9 @@ public class UserService {
         if(existingUser.isEmpty()) { // If it doesnt exist, create one user and saves it on the database
             User newUser = new User(userId, email, name, picture);
             userRepository.save(newUser);
-
         }
 
         return jwtUtils.generateToken(userId);
-    }
-
-    public User getUser(String id) {
-        return userRepository.findByGoogleId(id).orElse(null);
     }
 
     public Optional<User> getUserFromJWT(String jwt) {
@@ -80,5 +81,18 @@ public class UserService {
             userRepository.save(existingUser.get());
         }
         return existingUser;
+    }
+
+    @Cacheable("userCount")
+    public long getUserCount() {
+        return cachedUserCount;
+    }
+
+    @Scheduled(fixedRate = 5 * 60 * 1000) //Ask the database each 5 minutes
+    @CachePut("userCount")
+    public long refreshUserCount() {
+        long count = userRepository.count();
+        this.cachedUserCount = count;
+        return count;
     }
 }

@@ -14,7 +14,7 @@ function HomeComponent() {
             <h1>Bienvenido</h1>
             <div className="grid grid-cols-2 gap-4 pt-72">
                 <button className="px-4 py-2 button" onClick={goToTodayRoutine}>
-                    <span>Rutina de hoy</span>
+                    <span>Entrenamiento de hoy</span>
                 </button>
                 <button className="px-4 py-2 button">
                     <span>Calendario</span>

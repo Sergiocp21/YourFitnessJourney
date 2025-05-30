@@ -17,6 +17,12 @@ public class UserExerciseId implements java.io.Serializable {
 
     public UserExerciseId(){}
 
+    public UserExerciseId(String googleId, Long exerciseId) {
+        this.googleId = googleId;
+        this.exerciseId = exerciseId;
+    }
+
+
     public String getGoogleId() {
         return googleId;
     }

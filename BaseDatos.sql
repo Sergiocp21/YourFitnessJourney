@@ -24,6 +24,7 @@ CREATE TABLE exercises (
         'CLASES',
         'CROSSFIT',
         'ABS',
+        'DESCANSO',
         'OTROS'
     ),
     media_url VARCHAR(255),
@@ -56,6 +57,7 @@ CREATE TABLE user_routine_day_exercises (
     routine_day_id BIGINT NOT NULL,
     exercise_id BIGINT NOT NULL,
     sets INT CHECK (sets > 0),
+    exercise_order INT NOT NULL,
     FOREIGN KEY (google_id) REFERENCES users (google_id) ON DELETE CASCADE,
     FOREIGN KEY (routine_day_id) REFERENCES routine_days (id) ON DELETE CASCADE,
     FOREIGN KEY (exercise_id) REFERENCES exercises (id) ON DELETE CASCADE
@@ -75,8 +77,9 @@ CREATE TABLE user_routine_progress (
 CREATE TABLE user_exercises (
     google_id VARCHAR(50) NOT NULL,
     exercise_id BIGINT NOT NULL,
-    last_reps INT CHECK (last_reps > 0),
+    last_reps INT CHECK (last_reps >= 0),
     last_weight DECIMAL(5, 2),
+    exercise_note VARCHAR(255),
     PRIMARY KEY (google_id, exercise_id),
     FOREIGN KEY (google_id) REFERENCES users (google_id) ON DELETE CASCADE,
     FOREIGN KEY (exercise_id) REFERENCES exercises (id) ON DELETE CASCADE

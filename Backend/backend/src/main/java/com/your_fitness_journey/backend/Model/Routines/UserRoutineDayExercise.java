@@ -32,6 +32,10 @@ public class UserRoutineDayExercise {
     @Column(name = "sets")
     private Integer sets;
 
+    @Column(name = "exercise_order", nullable = false)
+    private int exerciseOrder;
+
+
     public UserRoutineDayExercise(){}
 
     public UserRoutineDayExercise(User user, RoutineDay routineDay, Exercise exercise, int numSets) {
@@ -39,6 +43,14 @@ public class UserRoutineDayExercise {
         this.routineDay = routineDay;
         this.exercise = exercise;
         this.sets = numSets;
+    }
+
+    public UserRoutineDayExercise(User user, RoutineDay day, Exercise exercise, int numSets, int exerciseOrder) {
+        this.user = user;
+        this.routineDay = day;
+        this.exercise = exercise;
+        this.sets = numSets;
+        this.exerciseOrder = exerciseOrder;
     }
 
     public Long getId() {
@@ -51,6 +63,10 @@ public class UserRoutineDayExercise {
 
     public User getUser() {
         return user;
+    }
+
+    public int getExerciseOrder() {
+        return exerciseOrder;
     }
 
     public void setUser(User google) {
@@ -79,6 +95,10 @@ public class UserRoutineDayExercise {
 
     public void setSets(Integer sets) {
         this.sets = sets;
+    }
+
+    public void setExerciseOrder(int exerciseOrder) {
+        this.exerciseOrder = exerciseOrder;
     }
 
 }

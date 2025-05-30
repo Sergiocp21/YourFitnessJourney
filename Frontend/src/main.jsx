@@ -7,16 +7,19 @@ import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./Auth/AuthProvider";
 import ErrorBoundary from "./ErrorBoundary";
+import NotificationProvider from "./components/Notifications/NotificationProvider";
 
 const clientId = import.meta.env.VITE_REACT_APP_Client_ID;
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <GoogleOAuthProvider clientId={clientId}>
-    <ErrorBoundary>
-      <AuthProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AuthProvider>
-    </ErrorBoundary>
-  </GoogleOAuthProvider>
+  <NotificationProvider>
+    <GoogleOAuthProvider clientId={clientId}>
+      <ErrorBoundary>
+        <AuthProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AuthProvider>
+      </ErrorBoundary>
+    </GoogleOAuthProvider>
+  </NotificationProvider>
 );

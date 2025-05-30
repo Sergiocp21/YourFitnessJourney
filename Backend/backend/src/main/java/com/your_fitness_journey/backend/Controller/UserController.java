@@ -93,6 +93,11 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserCount")
+    public ResponseEntity<Long> getUserCount() {
+        return ResponseEntity.ok(userService.getUserCount());
+    }
+
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody UpdateUserInfoDTO userChanges) {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

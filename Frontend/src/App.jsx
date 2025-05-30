@@ -1,13 +1,14 @@
 import { AuthContext } from './Auth/AuthContext';
 import { useContext, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import HeaderComponent from './components/Fijos/HeaderComponent';
 import FooterComponent from './components/Fijos/FooterComponent';
-import LandingPage from './components/LandingPage';
+import LandingPage from './components/Landing/LandingPage';
 import HomeComponent from './components/HomeComponent';
 import PrivateRoute from './components/PrivateRoute';
 import UserInfoComponent from './components/UserInfoComponent';
 import HomeRoutines from './components/Routines/HomeRoutines';
+import TrainingComponent from './components/ActiveRoutine/TrainingComponent';
 
 function App() {
   const { login } = useContext(AuthContext);
@@ -44,6 +45,12 @@ function App() {
               <HomeRoutines />
             </PrivateRoute>
           } />
+          <Route path='/todayRoutine' element={
+            <PrivateRoute>
+              <TrainingComponent />
+            </PrivateRoute>
+          } />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       <FooterComponent></FooterComponent>

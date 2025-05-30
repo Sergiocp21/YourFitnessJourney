@@ -3,6 +3,7 @@ package com.your_fitness_journey.backend.Model.Routines;
 import com.your_fitness_journey.backend.Model.Users.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -24,7 +25,7 @@ public class UserRoutineProgress {
     @JoinColumn(name = "google_id", nullable = false)
     private User users;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "routine_id", nullable = false)
     private Routine routine;
