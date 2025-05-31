@@ -50,6 +50,16 @@ const CreateRoutineComponent = ({ goBack, initialRoutine, setView }) => {
     };
 
     const handleSaveRoutine = async () => {
+        if (days.some(day => day.exercises.length === 0)) {
+            notify("No se pueden guardar días vacíos.", "error");
+            return;
+        }
+
+        if (days.some(day => day.exercises.some(exercise => exercise.sets <= 0))) {
+            notify("Todos los ejercicios deben tener al menos 1 serie.", "error");
+            return;
+        }
+
         const routine = new RoutineDTO(
             initialRoutine?.routineId || 0,
             routineName,

@@ -22,13 +22,14 @@ export default function TrainingComponent() {
     const fetchToday = useCallback(async () => {
         const exercises = await getTodayExercises(token);
         setTodayExercises(exercises);
+        console.log(exercises);
         const initialData = {};
         exercises.exercises.forEach((ex) => {
-            initialData[ex.exerciseId] = {
+            initialData[ex.id] = {
                 reps: "",
                 weight: "",
                 notes: ex.notes || "",
-                exerciseId: ex.exerciseId,
+                id: ex.id,
             };
         });
         setExerciseData(initialData);
@@ -48,58 +49,53 @@ export default function TrainingComponent() {
     const handleInputChange = (field, value) => {
         setExerciseData((prev) => ({
             ...prev,
-            [actualExercise.exerciseId]: {
-                ...prev[actualExercise.exerciseId],
+            [actualExercise.id]: {
+                ...prev[actualExercise.id],
                 [field]: value,
             },
         }));
     };
 
     const handleNextExercise = () => {
-        const currentData = exerciseData[actualExercise.exerciseId];
+        const currentData = exerciseData[actualExercise.id];
 
         const hasReps = currentData?.reps !== "" && currentData?.reps !== undefined;
         const hasWeight = currentData?.weight !== "" && currentData?.weight !== undefined;
 
         if ((hasReps && !hasWeight) || (!hasReps && hasWeight)) {
-            // Si uno de los dos inputs tiene datos y el otro no, mostrar error
             notify("Por favor, rellena tanto las repeticiones como el peso antes de continuar al siguiente ejercicio o déjalo vacío si hoy no has podido realizarlo.", "error");
             return;
         }
 
-        if (actualExerciseIndex < todayExercises.exercises.length - 1) {
-            setExerciseData((prev) => {
-                const updatedData = {
-                    ...prev,
-                    [actualExercise.exerciseId]: {
-                        reps: prev[actualExercise.exerciseId]?.reps || "",
-                        weight: prev[actualExercise.exerciseId]?.weight || "",
-                        notes: prev[actualExercise.exerciseId]?.notes || actualExercise.notes || "",
-                        exerciseId: actualExercise.exerciseId, // Aseguramos que el exerciseId se incluya
-                    },
-                };
+        const updatedCurrentExercise = {
+            reps: currentData?.reps || "",
+            weight: currentData?.weight || "",
+            notes: currentData?.notes || actualExercise.notes || "",
+            id: actualExercise.id,
+        };
 
-                let routineDayDTO = getExerciseDataFromStorage() || new RoutineDayDTO(todayExercises.order, todayExercises.name, []);
-                if (!Array.isArray(routineDayDTO.exercises)) {
-                    routineDayDTO.exercises = [];
-                }
+        let routineDayDTO = getExerciseDataFromStorage() || new RoutineDayDTO(todayExercises.order, todayExercises.name, []);
+        if (!Array.isArray(routineDayDTO.exercises)) {
+            routineDayDTO.exercises = [];
+        }
 
-                routineDayDTO.exercises.push(updatedData[actualExercise.exerciseId]);
+        routineDayDTO.exercises.push(updatedCurrentExercise);
+        saveExerciseDataToStorage(routineDayDTO);
 
-                saveExerciseDataToStorage(routineDayDTO);
+        const nextIndex = actualExerciseIndex + 1;
+        const nextExercise = todayExercises.exercises[nextIndex];
 
-                const nextExerciseId = todayExercises.exercises[actualExerciseIndex + 1]?.exerciseId; // Corregimos el índice para avanzar correctamente
-                updatedData[nextExerciseId] = {
+        if (nextExercise) {
+            setExerciseData((prev) => ({
+                ...prev,
+                [nextExercise.id]: {
                     reps: "",
                     weight: "",
-                    notes: "",
-                    exerciseId: nextExerciseId, // Añadimos el exerciseId al siguiente ejercicio
-                };
-
-                return updatedData;
-            });
-
-            setActualExerciseIndex((prev) => prev + 1); // Incrementamos correctamente el índice
+                    notes: nextExercise.notes || "",
+                    id: nextExercise.id,
+                }
+            }));
+            setActualExerciseIndex(nextIndex);
         }
     };
 
@@ -111,7 +107,7 @@ export default function TrainingComponent() {
                 return;
             }
 
-            const currentData = exerciseData[actualExercise.exerciseId];
+            const currentData = exerciseData[actualExercise.id];
 
             const hasReps = currentData?.reps !== "" && currentData?.reps !== undefined;
             const hasWeight = currentData?.weight !== "" && currentData?.weight !== undefined;
@@ -182,7 +178,7 @@ export default function TrainingComponent() {
             )}
 
             {actualExercise ? (
-                <div key={actualExercise.exerciseId}>
+                <div key={actualExercise.id}>
                     <h3 className="font-semibold">Ejercicio: {actualExercise.name}</h3>
                     <p>{actualExercise.sets} series</p>
 
@@ -194,7 +190,7 @@ export default function TrainingComponent() {
                                 className="border rounded p-2 w-1/2 text-center"
                                 min="1"
                                 placeholder={actualExercise.reps ? "Última vez: " + actualExercise.reps : "Primera vez"}
-                                value={exerciseData[actualExercise.exerciseId]?.reps || ""}
+                                value={exerciseData[actualExercise.id]?.reps || ""}
                                 onChange={(e) =>
                                     handleInputChange("reps", e.target.value === "" ? "" : parseInt(e.target.value))
                                 }
@@ -208,7 +204,7 @@ export default function TrainingComponent() {
                                 min="1"
                                 step="any"
                                 placeholder={actualExercise.weight ? "Última vez: " + actualExercise.weight + "kg" : "Primera vez"}
-                                value={exerciseData[actualExercise.exerciseId]?.weight || ""}
+                                value={exerciseData[actualExercise.id]?.weight || ""}
                                 onChange={(e) =>
                                     handleInputChange("weight", e.target.value === "" ? "" : parseFloat(e.target.value))
                                 }
@@ -220,7 +216,7 @@ export default function TrainingComponent() {
                                 className="border rounded p-2 w-3/4"
                                 rows="3"
                                 placeholder="Aún no tienes notas en este ejercicio..."
-                                value={exerciseData[actualExercise.exerciseId]?.notes ?? actualExercise.notes ?? ""}
+                                value={exerciseData[actualExercise.id]?.notes ?? actualExercise.notes ?? ""}
                                 onChange={(e) =>
                                     handleInputChange("notes", e.target.value)
                                 }

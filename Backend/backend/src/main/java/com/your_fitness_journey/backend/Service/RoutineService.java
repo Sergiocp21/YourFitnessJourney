@@ -364,15 +364,18 @@ public class RoutineService {
         //Update user exercises
         RoutineDay routineDay = routineDayRepository.findByRoutineAndDayOrder(userRoutineProgress.getRoutine(), currentDay)
                 .orElseThrow(() -> new RuntimeException("Dia de rutina no encontrado"));
-        List <UserRoutineDayExercise> userRoutineDayExercises = userRoutineDayExerciseRepository.findUserRoutineDayExercisesByRoutineDayOrderByExerciseOrder(routineDay); //Today exercises
-        int exerciseOrder = 0;
-        //TODO Mejorar esto pasando el id del ejercicio al frontEnd a la hora de realizar el ejercicio e iterar por exerciseDayDTO
-        for(UserRoutineDayExercise userRoutineDayExercise : userRoutineDayExercises){
-            ExerciseInfoDTO exerciseInfoDTO = exerciseDayDTO.getExercises().get(exerciseOrder);
-            if(!exerciseService.updateUserExercise(userRoutineDayExercise.getUser(), userRoutineDayExercise.getExercise(), exerciseInfoDTO.getWeight(), exerciseInfoDTO.getReps(), exerciseInfoDTO.getNotes())){
-                return false;
+        List <ExerciseInfoDTO> exerciseInfoDTOList = exerciseDayDTO.getExercises();
+        for(ExerciseInfoDTO exerciseInfoDTO : exerciseInfoDTOList){
+            Optional <Exercise> exercise = exerciseService.getExerciseById(exerciseInfoDTO.getExerciseId());
+            if(exercise.isPresent()){
+                if(exerciseInfoDTO.getWeight() != null && !Objects.equals(exerciseInfoDTO.getWeight(), BigDecimal.ZERO) && exerciseInfoDTO.getReps() != 0){ //If there is data, modifies UserExercise
+                    if(!exerciseService.updateUserExercise(user, exercise.get(), exerciseInfoDTO.getWeight(), exerciseInfoDTO.getReps(), exerciseInfoDTO.getNotes())){
+                        return false;
+                    }
+                }
+
             }
-            exerciseOrder++;
+
         }
         return true;
     }

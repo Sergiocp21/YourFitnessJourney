@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { getExercisesByMuscleGroup, getMuscleGroups } from "../../../api";
+import { useNotification } from "../../Notifications/useNotification";
 
 const ExerciseSelector = ({ onSelect }) => {
+    const { notify } = useNotification();
     const [muscleGroups, setMuscleGroups] = useState([]);
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [exercises, setExercises] = useState([]);
@@ -72,7 +74,7 @@ const ExerciseSelector = ({ onSelect }) => {
             setSets("");  // Limpiar el campo de sets después de añadir el ejercicio
         } else {
             // Opcional: Mostrar un mensaje si no es válido
-            alert("Por favor, ingrese un número válido de sets.");
+            notify("Por favor, ingrese un número válido de sets.", "error");
         }
     };
 

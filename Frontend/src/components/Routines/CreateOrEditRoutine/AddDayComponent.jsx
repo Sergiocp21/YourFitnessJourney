@@ -22,13 +22,6 @@ const AddDayComponent = ({ day, index, updateDay, deleteDay }) => {
         updateDay({ ...day, exercises: updatedExercises });
     };
 
-    const toggleDescription = (idx) => {
-        const updatedExercises = day.exercises.map((ex, i) =>
-            i === idx ? { ...ex, showDescription: !ex.showDescription } : ex
-        );
-        updateDay({ ...day, exercises: updatedExercises });
-    };
-
     return (
         <div className="bg-gray-900 p-4 mb-4 rounded-lg shadow">
             <div className="flex justify-between items-center mb-2">
@@ -50,19 +43,30 @@ const AddDayComponent = ({ day, index, updateDay, deleteDay }) => {
             {day.exercises.map((exercise, idx) => (
                 <div key={idx} className="bg-gray-800 p-3 rounded border mb-2 hover:shadow transition">
                     <div className="flex justify-between items-center">
-                        <div onClick={() => toggleDescription(idx)} className="cursor-pointer font-semibold">
+                        <div className="cursor-pointer font-semibold">
                             Ejercicio {idx + 1}: {exercise.name}
                         </div>
                         <button onClick={() => removeExercise(idx)} className="bg-red-400 text-white px-2 py-1 rounded hover:bg-red-500 text-sm">
                             Eliminar
                         </button>
                     </div>
-                    {exercise.showDescription && (
-                        <div className="mt-2 text-gray-400">
-                            <p>{exercise.description}</p>
-                            <strong>Series: {exercise.sets}</strong> {/* Aquí mostramos el número de sets */}
-                        </div>
-                    )}
+                    <div className="mt-2 text-gray-400">
+                        <p>{exercise.description}</p>
+                        <label>
+                            Series:
+                            <input
+                                type="number"
+                                value={exercise.sets}
+                                onChange={(e) => {
+                                    const updatedExercises = day.exercises.map((ex, i) =>
+                                        i === idx ? { ...ex, sets: e.target.value } : ex
+                                    );
+                                    updateDay({ ...day, exercises: updatedExercises });
+                                }}
+                                className="border p-1 rounded w-20"
+                            />
+                        </label>
+                    </div>
                 </div>
             ))}
 
