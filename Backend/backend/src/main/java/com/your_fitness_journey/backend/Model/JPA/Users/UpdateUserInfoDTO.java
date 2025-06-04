@@ -1,4 +1,4 @@
-package com.your_fitness_journey.backend.Model.Users;
+package com.your_fitness_journey.backend.Model.JPA.Users;
 
 public class UpdateUserInfoDTO {
     private String name;
@@ -6,6 +6,8 @@ public class UpdateUserInfoDTO {
     private String pictureUrl;
     private int weight;
     private int height;
+
+
 
     public String getName() {
         return name;

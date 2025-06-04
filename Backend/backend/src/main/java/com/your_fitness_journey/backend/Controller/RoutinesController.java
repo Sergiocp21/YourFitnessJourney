@@ -1,14 +1,13 @@
 package com.your_fitness_journey.backend.Controller;
 
-import com.your_fitness_journey.backend.Model.Exercises.ExerciseDayDTO;
-import com.your_fitness_journey.backend.Model.Routines.FullRoutineInfoDTO;
-import com.your_fitness_journey.backend.Model.Routines.Routine;
-import com.your_fitness_journey.backend.Model.Routines.UserRoutineDayExercise;
-import com.your_fitness_journey.backend.Model.Routines.UserRoutineProgress;
-import com.your_fitness_journey.backend.Model.Users.User;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.ExerciseDayDTO;
+import com.your_fitness_journey.backend.Model.JPA.Routines.FullRoutineInfoDTO;
+import com.your_fitness_journey.backend.Model.JPA.Routines.Routine;
+import com.your_fitness_journey.backend.Model.JPA.Routines.UserRoutineDayExercise;
+import com.your_fitness_journey.backend.Model.JPA.Routines.UserRoutineProgress;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import com.your_fitness_journey.backend.Service.RoutineService;
 import com.your_fitness_journey.backend.Service.UserService;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

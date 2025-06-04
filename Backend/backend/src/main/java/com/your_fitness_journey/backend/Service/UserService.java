@@ -1,14 +1,13 @@
 package com.your_fitness_journey.backend.Service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.your_fitness_journey.backend.Model.Users.UpdateUserInfoDTO;
-import com.your_fitness_journey.backend.Model.Users.User;
-import com.your_fitness_journey.backend.Repository.IUserRepository;
+import com.your_fitness_journey.backend.Model.JPA.Users.UpdateUserInfoDTO;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
+import com.your_fitness_journey.backend.Repository.JPA.IUserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 

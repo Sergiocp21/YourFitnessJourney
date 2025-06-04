@@ -1,8 +1,8 @@
-package com.your_fitness_journey.backend.Model.Routines;
+package com.your_fitness_journey.backend.Model.JPA.Routines;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.your_fitness_journey.backend.Model.Exercises.ExerciseDayDTO;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.ExerciseDayDTO;
 
 import java.util.List;
 

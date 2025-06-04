@@ -1,6 +1,6 @@
-package com.your_fitness_journey.backend.Model.Exercises;
+package com.your_fitness_journey.backend.Model.JPA.Exercises;
 
-import com.your_fitness_journey.backend.Model.Users.User;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -43,6 +43,15 @@ public class UserExercise {
         this.lastWeight = weight;
         this.lastReps = reps;
         this.exerciseNote = "";
+    }
+
+    public UserExercise(User user, Exercise exercise, BigDecimal weight, int reps, String notes) {
+        this.user = user;
+        this.exercise = exercise;
+        this.id = new UserExerciseId(user.getGoogleId(), exercise.getId());
+        this.lastWeight = weight;
+        this.lastReps = reps;
+        this.exerciseNote = notes;
     }
 
     public UserExerciseId getId() {

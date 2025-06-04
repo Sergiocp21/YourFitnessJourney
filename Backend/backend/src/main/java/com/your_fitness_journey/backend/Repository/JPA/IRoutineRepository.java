@@ -1,7 +1,7 @@
-package com.your_fitness_journey.backend.Repository;
+package com.your_fitness_journey.backend.Repository.JPA;
 
-import com.your_fitness_journey.backend.Model.Routines.Routine;
-import com.your_fitness_journey.backend.Model.Users.User;
+import com.your_fitness_journey.backend.Model.JPA.Routines.Routine;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

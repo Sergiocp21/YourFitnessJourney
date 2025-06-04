@@ -1,13 +1,15 @@
 package com.your_fitness_journey.backend.Service;
 
-import com.your_fitness_journey.backend.Model.Exercises.Exercise;
-import com.your_fitness_journey.backend.Model.Exercises.ExerciseDayDTO;
-import com.your_fitness_journey.backend.Model.Exercises.ExerciseInfoDTO;
-import com.your_fitness_journey.backend.Model.Exercises.UserExercise;
-import com.your_fitness_journey.backend.Model.Routines.UserRoutineDayExercise;
-import com.your_fitness_journey.backend.Model.Routines.*;
-import com.your_fitness_journey.backend.Model.Users.User;
-import com.your_fitness_journey.backend.Repository.*;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.Exercise;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.ExerciseDayDTO;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.ExerciseInfoDTO;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.UserExercise;
+import com.your_fitness_journey.backend.Model.JPA.Routines.*;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
+import com.your_fitness_journey.backend.Repository.JPA.IRoutineDayRepository;
+import com.your_fitness_journey.backend.Repository.JPA.IRoutineRepository;
+import com.your_fitness_journey.backend.Repository.JPA.IUserRoutineDayExerciseRepository;
+import com.your_fitness_journey.backend.Repository.JPA.IUserRoutineProgressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +27,16 @@ public class RoutineService {
     private final IRoutineDayRepository routineDayRepository;
     private final IUserRoutineDayExerciseRepository userRoutineDayExerciseRepository;
     private final IUserRoutineProgressRepository userRoutineProgressRepository;
+    private final StatisticsService statisticsService;
 
     @Autowired
-    public RoutineService(IRoutineDayRepository routineDayRepository, IUserRoutineDayExerciseRepository userRoutineExerciseRepository, IRoutineRepository routineRepository, ExerciseService exerciseService, IUserRoutineProgressRepository userRoutineProgressRepository) {
+    public RoutineService(IRoutineDayRepository routineDayRepository, IUserRoutineDayExerciseRepository userRoutineExerciseRepository, IRoutineRepository routineRepository, ExerciseService exerciseService, IUserRoutineProgressRepository userRoutineProgressRepository, StatisticsService statisticsService) {
         this.routineDayRepository = routineDayRepository;
         this.userRoutineDayExerciseRepository = userRoutineExerciseRepository;
         this.routineRepository = routineRepository;
         this.exerciseService = exerciseService;
         this.userRoutineProgressRepository = userRoutineProgressRepository;
+        this.statisticsService = statisticsService;
     }
 
     @Transactional
@@ -346,6 +350,7 @@ public class RoutineService {
         userRoutineProgressRepository.save(progress);
     }
 
+    @Transactional
     public boolean updateTodayWorkout(User user, ExerciseDayDTO exerciseDayDTO) {
         UserRoutineProgress userRoutineProgress = userRoutineProgressRepository.findById(user.getGoogleId()).get();
         int maxRoutineDays = routineDayRepository.findMaxDayByRoutine(userRoutineProgress.getRoutine());
@@ -369,7 +374,11 @@ public class RoutineService {
             Optional <Exercise> exercise = exerciseService.getExerciseById(exerciseInfoDTO.getExerciseId());
             if(exercise.isPresent()){
                 if(exerciseInfoDTO.getWeight() != null && !Objects.equals(exerciseInfoDTO.getWeight(), BigDecimal.ZERO) && exerciseInfoDTO.getReps() != 0){ //If there is data, modifies UserExercise
-                    if(!exerciseService.updateUserExercise(user, exercise.get(), exerciseInfoDTO.getWeight(), exerciseInfoDTO.getReps(), exerciseInfoDTO.getNotes())){
+                    Optional <UserExercise> userExercise = exerciseService.updateUserExercise(user, exercise.get(), exerciseInfoDTO.getWeight(), exerciseInfoDTO.getReps(), exerciseInfoDTO.getNotes());
+                    if(userExercise.isPresent()){
+                        statisticsService.postUserExerciseLog(userExercise.get());
+                    }
+                    else{
                         return false;
                     }
                 }

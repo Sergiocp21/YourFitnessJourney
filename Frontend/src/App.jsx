@@ -9,6 +9,8 @@ import PrivateRoute from './components/PrivateRoute';
 import UserInfoComponent from './components/UserInfoComponent';
 import HomeRoutines from './components/Routines/HomeRoutines';
 import TrainingComponent from './components/ActiveRoutine/TrainingComponent';
+import ExerciseSelectorComponent from './components/Statistics/ExerciseSelectorComponent';
+import StatisticsPage from './components/Statistics/StatisticsPage';
 
 function App() {
   const { login } = useContext(AuthContext);
@@ -50,6 +52,18 @@ function App() {
               <TrainingComponent />
             </PrivateRoute>
           } />
+          <Route path='/statistics' element={
+            <PrivateRoute>
+              <ExerciseSelectorComponent />
+            </PrivateRoute>
+          } />
+          {/* Dynamic route for statistics by exercise ID */}
+          <Route path='/statistics/:exerciseId' element={
+            <PrivateRoute>
+              <StatisticsPage />
+            </PrivateRoute>
+          } />
+          {/* Catch-all undefined routes to redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

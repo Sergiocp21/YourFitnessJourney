@@ -1,7 +1,7 @@
-package com.your_fitness_journey.backend.Repository;
+package com.your_fitness_journey.backend.Repository.JPA;
 
-import com.your_fitness_journey.backend.Model.Routines.RoutineDay;
-import com.your_fitness_journey.backend.Model.Routines.UserRoutineDayExercise;
+import com.your_fitness_journey.backend.Model.JPA.Routines.RoutineDay;
+import com.your_fitness_journey.backend.Model.JPA.Routines.UserRoutineDayExercise;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

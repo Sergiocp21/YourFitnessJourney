@@ -1,5 +1,6 @@
-package com.your_fitness_journey.backend.Model.Users;
+package com.your_fitness_journey.backend.Model.JPA.Users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -12,8 +13,10 @@ import java.time.Instant;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @Column(name = "google_id", nullable = false, length = 50)
+    @JsonIgnore
     private String googleId;
 
     @Column(name = "email", nullable = false, length = 100)

@@ -1,7 +1,7 @@
-package com.your_fitness_journey.backend.Model.Routines;
+package com.your_fitness_journey.backend.Model.JPA.Routines;
 
-import com.your_fitness_journey.backend.Model.Exercises.Exercise;
-import com.your_fitness_journey.backend.Model.Users.User;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.Exercise;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

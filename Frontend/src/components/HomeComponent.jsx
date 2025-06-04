@@ -9,6 +9,10 @@ function HomeComponent() {
         navigate("/todayRoutine");
     }
 
+    function goToStatistics() {
+        navigate("/statistics");
+    }
+
     return (
         <div>
             <h1>Bienvenido</h1>
@@ -22,8 +26,8 @@ function HomeComponent() {
                 <button className="px-4 py-2 button" onClick={goToRoutines}>
                     <span>Rutinas</span>
                 </button>
-                <button className="w-full px-4 py-2 button">
-                    <span className="relative z-10">Historial</span>
+                <button className="w-full px-4 py-2 button" onClick={goToStatistics}>
+                    <span className="relative z-10">Estadísticas</span>
                 </button>
 
             </div>

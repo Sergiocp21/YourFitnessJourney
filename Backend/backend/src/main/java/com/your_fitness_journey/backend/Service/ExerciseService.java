@@ -1,16 +1,12 @@
 package com.your_fitness_journey.backend.Service;
 
-import com.your_fitness_journey.backend.Model.Exercises.Exercise;
-import com.your_fitness_journey.backend.Model.Exercises.MuscleGroup;
-import com.your_fitness_journey.backend.Model.Exercises.UserExercise;
-import com.your_fitness_journey.backend.Model.Exercises.UserExerciseId;
-import com.your_fitness_journey.backend.Model.Routines.UserRoutineDayExercise;
-import com.your_fitness_journey.backend.Model.Routines.UserRoutineProgress;
-import com.your_fitness_journey.backend.Model.Users.User;
-import com.your_fitness_journey.backend.Repository.IExerciseRepository;
-import com.your_fitness_journey.backend.Repository.IUserExerciseRepository;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.Exercise;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.MuscleGroup;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.UserExercise;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
+import com.your_fitness_journey.backend.Repository.JPA.IExerciseRepository;
+import com.your_fitness_journey.backend.Repository.JPA.IUserExerciseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -43,6 +39,13 @@ public class ExerciseService {
         return userExerciseRepository.findUserExercisesByExerciseAndUser(exercise, user);
     }
 
+    public List<Exercise> getExercisesByUser(User user) {
+        return userExerciseRepository.findAllByUser(user)
+                .stream()
+                .map(UserExercise::getExercise)
+                .collect(Collectors.toList());
+    }
+
     public Map<Long, UserExercise> getUserExercises(User user, List<Exercise> exercises) {
         if (exercises == null || exercises.isEmpty()) return Map.of();
 
@@ -59,7 +62,7 @@ public class ExerciseService {
     }
 
 
-    public boolean updateUserExercise(User user, Exercise exercise, BigDecimal weight, int reps, String note) {
+    public Optional<UserExercise> updateUserExercise(User user, Exercise exercise, BigDecimal weight, int reps, String note) {
         Optional <UserExercise> userExerciseOptional = userExerciseRepository.findUserExercisesByExerciseAndUser(exercise, user);
 
         if(userExerciseOptional.isPresent()){
@@ -68,9 +71,9 @@ public class ExerciseService {
             userExercise.setLastReps(reps);
             userExercise.setExerciseNote(note);
             userExerciseRepository.save(userExercise);
-            return true;
+
         }
-        return false;
+        return userExerciseOptional;
 
     }
 

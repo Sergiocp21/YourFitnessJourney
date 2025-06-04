@@ -55,7 +55,7 @@ export const updateUserInfo = async (token, updatedUser) => {
             "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
         },
-    }).then((response) => { response.data; window.location.href = "/home"; })
+    }).then((response) => response.data)
         .catch((error) => console.log("Error updating user data:", error));
 
 
@@ -222,6 +222,30 @@ export const getUserCount = async () => {
         .catch(error => {
             console.error("Error fetching user count:", error);
             throw new Error("Error fetching user count");
+        });
+}
+
+export const getUserExerciseStatistics = async (token, exerciseId) => {
+    return api.get(`/statistics/getUserExerciseStatistics/${exerciseId}`, {
+        headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+        }
+    }).then(res => res.data)
+        .catch(error => {
+            console.error("Error fetching user exercise statistics:", error);
+            throw new Error("Error fetching user exercise statistics");
+        });
+}
+
+export const getUserExercises = async (token) => {
+    return api.get("/exercises/getUserExercises", {
+        headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+        }
+    }).then(res => res.data)
+        .catch(error => {
+            console.error("Error fetching user exercises:", error);
+            throw new Error("Error fetching user exercises");
         });
 }
 

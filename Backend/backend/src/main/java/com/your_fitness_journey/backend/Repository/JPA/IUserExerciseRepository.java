@@ -1,17 +1,14 @@
-package com.your_fitness_journey.backend.Repository;
+package com.your_fitness_journey.backend.Repository.JPA;
 
-import com.your_fitness_journey.backend.Model.Exercises.Exercise;
-import com.your_fitness_journey.backend.Model.Exercises.UserExercise;
-import com.your_fitness_journey.backend.Model.Exercises.UserExerciseId;
-import com.your_fitness_journey.backend.Model.Routines.UserRoutineDayExercise;
-import com.your_fitness_journey.backend.Model.Users.User;
-import org.springframework.data.domain.Pageable;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.Exercise;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.UserExercise;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.UserExerciseId;
+import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +27,5 @@ public interface IUserExerciseRepository extends JpaRepository<UserExercise, Use
             @Param("exerciseIds") List<Long> exerciseIds
     );
 
+    List<UserExercise> findAllByUser(User user);
 }

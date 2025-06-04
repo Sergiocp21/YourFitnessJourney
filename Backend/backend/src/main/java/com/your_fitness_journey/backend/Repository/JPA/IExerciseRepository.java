@@ -1,7 +1,7 @@
-package com.your_fitness_journey.backend.Repository;
+package com.your_fitness_journey.backend.Repository.JPA;
 
-import com.your_fitness_journey.backend.Model.Exercises.Exercise;
-import com.your_fitness_journey.backend.Model.Exercises.MuscleGroup;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.Exercise;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.MuscleGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
