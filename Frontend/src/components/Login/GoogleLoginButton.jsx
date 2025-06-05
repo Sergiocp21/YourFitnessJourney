@@ -30,6 +30,7 @@ function GoogleLoginButton() {
         console.log("Login Failed");
     };
     const clientId = import.meta.env.VITE_REACT_APP_Client_ID
+    console.log("client id: ", clientId);
     return (
 
         <GoogleOAuthProvider clientId={clientId}>
