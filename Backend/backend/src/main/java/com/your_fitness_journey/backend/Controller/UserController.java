@@ -11,6 +11,7 @@ import com.your_fitness_journey.backend.Model.JPA.Users.UserNameAndImageDTO;
 import com.your_fitness_journey.backend.Service.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +28,8 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-    public static final Dotenv env = Dotenv.load();
-
-    private final String CLIENT_ID = env.get("CLIENT_ID");
+    @Value("${CLIENT_ID}")
+    private String CLIENT_ID;
 
     @PostMapping("/access")
     public ResponseEntity<String> loginWithGoogle(@RequestBody String credential) {
