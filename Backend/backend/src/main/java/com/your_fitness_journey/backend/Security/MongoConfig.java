@@ -4,6 +4,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,14 +19,18 @@ import java.security.cert.X509Certificate;
 
 @Configuration
 public class MongoConfig {
+    @Value("${MONGO_URL}")
+    private String mongoDbUrl;
 
+    @Value("${CA_PEM_FILEPATH}")
+    private String caPemFilePath;
 
 
     @Bean
     public MongoClient mongoClient() throws Exception {
         // Carga el certificado CA
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        InputStream caInput = Files.newInputStream(Paths.get("/etc/mongo/certs/ca.pem"));
+        InputStream caInput = Files.newInputStream(Paths.get(caPemFilePath));
         X509Certificate caCert = (X509Certificate) cf.generateCertificate(caInput);
 
         // Crear un KeyStore con el certificado CA
@@ -42,7 +47,7 @@ public class MongoConfig {
         sslContext.init(null, tmf.getTrustManagers(), null);
 
         MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString("mongodb://root:password@host:27017/?tls=true"))
+                .applyConnectionString(new ConnectionString(mongoDbUrl))
                 .applyToSslSettings(builder -> builder.enabled(true).context(sslContext))
                 .build();
 
