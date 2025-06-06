@@ -1,9 +1,11 @@
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useNotification } from '../Notifications/useNotification';
 
 
 function GoogleLoginButton() {
+    const { notify } = useNotification();
     const navigate = useNavigate();
     const onSuccess = async (credentialResponse) => {
         try {
@@ -27,10 +29,9 @@ function GoogleLoginButton() {
     };
 
     const onError = () => {
-        console.log("Login Failed");
+        notify("Error al iniciar sesión con Google. Por favor, inténtalo de nuevo.", "error");
     };
     const clientId = import.meta.env.VITE_REACT_APP_Client_ID
-    console.log("client id: ", clientId);
     return (
 
         <GoogleOAuthProvider clientId={clientId}>
