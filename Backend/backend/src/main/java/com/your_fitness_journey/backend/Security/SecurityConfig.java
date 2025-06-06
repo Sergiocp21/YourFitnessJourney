@@ -7,8 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -23,37 +24,48 @@ public class SecurityConfig {
         this.userService = userService;
     }
 
-    // CORS Configuration
+    /**
+     * Configura un filtro CORS global para la aplicación.
+     * Este bean se encargará de añadir los encabezados CORS necesarios
+     * a todas las respuestas del backend.
+     */
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "https://yourfitnessjourney.fit") // Allow frontend access from localhost
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
-            }
-        };
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        // Lista de orígenes permitidos. Asegúrate de que coincida exactamente con el dominio de tu frontend.
+        config.setAllowedOrigins(List.of("http://localhost:5173", "https://yourfitnessjourney.fit"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*")); // Permite todos los encabezados
+        source.registerCorsConfiguration("/**", config); // Aplica esta configuración a todas las rutas
+        return new CorsFilter(source);
     }
 
-    // Security Configuration
+    /**
+     * Configura la cadena de filtros de seguridad HTTP para la aplicación.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .csrf(csrf -> csrf.disable()) // Deshabilita CSRF, común para APIs REST sin sesiones basadas en cookies
+                // Aplica la configuración CORS usando el CorsFilter definido.
+                // Spring Security detectará el bean CorsFilter y lo usará automáticamente.
                 .cors(cors -> cors.configurationSource(request -> {
-                    var corsVar = new org.springframework.web.cors.CorsConfiguration();
-                    corsVar.setAllowedOrigins(List.of("http://localhost:5173", "https://yourfitnessjourney.fit")); // Allow frontend origin
-                    corsVar.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    corsVar.setAllowedHeaders(List.of("*"));
-                    corsVar.setAllowCredentials(true);
-                    return corsVar;
+                    CorsConfiguration corsConfig = new CorsConfiguration();
+                    corsConfig.setAllowedOrigins(List.of("http://localhost:5173", "https://yourfitnessjourney.fit"));
+                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
+                    return corsConfig;
                 }))
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/backend/access, /backend/").permitAll() // Allow access to endpoints
-                        .anyRequest().permitAll()
+                        // Permite el acceso sin autenticación a tus endpoints de acceso y conteo de usuarios.
+                        // Ajusta estas rutas para que coincidan exactamente con tus endpoints.
+                        // Por ejemplo, si tienes "/users/access" y "/users/getUserCount".
+                        .requestMatchers("/users/access", "/users/getUserCount").permitAll()
+                        // Cualquier otra solicitud requiere autenticación.
+                        .anyRequest().authenticated()
                 )
                 .build();
     }
