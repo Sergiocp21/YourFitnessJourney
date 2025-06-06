@@ -22,7 +22,7 @@ public class BackendApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins("http://localhost:5173", "https://yourfitnessjourney.fit:5173");
+                registry.addMapping("/**").allowedOrigins("http://localhost:5173", "https://yourfitnessjourney.fit");
             }
         };
     }
