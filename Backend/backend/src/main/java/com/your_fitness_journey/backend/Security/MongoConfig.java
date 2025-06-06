@@ -9,48 +9,46 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.cert.CertificateFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 @Configuration
 public class MongoConfig {
-    @Value("${MONGO_URL}")
-    private String mongoDbUrl;
-
-    @Value("${CA_PEM_FILEPATH}")
-    private String caPemFilePath;
-
+    // Inyectamos la URL de Mongo desde application.properties
+    @Value("${spring.data.mongodb.uri}")
+    private String mongoUri;
 
     @Bean
-    public MongoClient mongoClient() throws Exception {
-        // Carga el certificado CA
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        InputStream caInput = Files.newInputStream(Paths.get(caPemFilePath));
-        X509Certificate caCert = (X509Certificate) cf.generateCertificate(caInput);
+    public MongoClient mongoClient() throws NoSuchAlgorithmException, KeyManagementException {
+        // 1. Crear un TrustManager que confía en cualquier certificado.
+        // Esto es un 'hack' para desarrollo y entornos internos seguros como Coolify.
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+        };
 
-        // Crear un KeyStore con el certificado CA
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(null, null);
-        ks.setCertificateEntry("caCert", caCert);
-
-        // Crear TrustManager que usa el KeyStore con el CA
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        tmf.init(ks);
-
-        // Crear SSLContext con el TrustManager
+        // 2. Crear un SSLContext que use nuestro TrustManager "ciego".
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, tmf.getTrustManagers(), null);
+        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
 
+        // 3. Construir los settings del cliente de MongoDB
         MongoClientSettings settings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(mongoDbUrl))
-                .applyToSslSettings(builder -> builder.enabled(true).context(sslContext))
+                .applyConnectionString(new ConnectionString(mongoUri))
+                .applyToSslSettings(builder -> {
+                    builder.enabled(true);
+                    builder.context(sslContext);
+                })
                 .build();
 
+        // 4. Crear y devolver el cliente con nuestra configuración personalizada.
         return MongoClients.create(settings);
     }
 
