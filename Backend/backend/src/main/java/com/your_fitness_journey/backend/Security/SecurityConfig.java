@@ -1,11 +1,14 @@
 package com.your_fitness_journey.backend.Security;
 
+import com.your_fitness_journey.backend.Security.JWT.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -15,8 +18,13 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    // Este Bean CorsFilter es el que Spring Security detectará y usará
-    // cuando llames a .cors(Customizer.withDefaults())
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) { // Constructor para inyectar
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -32,16 +40,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                // Habilita CORS usando el CorsFilter bean que hemos definido.
-                // Spring Security detectará el bean CorsFilter y lo aplicará.
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable()) // Deshabilita CSRF, común para APIs REST sin sesiones basadas en cookies
+                .csrf(csrf -> csrf.disable())
+                // Configura la gestión de sesiones como STATELESS, crucial para JWT
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Permite el acceso sin autenticación a tus endpoints de acceso y conteo de usuarios.
                         .requestMatchers("/users/access", "/users/getUserCount").permitAll()
-                        // Cualquier otra solicitud requiere autenticación.
                         .anyRequest().authenticated()
                 )
+                // Añade tu filtro JWT antes del filtro de autenticación de usuario/contraseña de Spring
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
