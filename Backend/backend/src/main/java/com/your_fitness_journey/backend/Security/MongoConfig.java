@@ -18,7 +18,7 @@ import java.security.cert.X509Certificate;
 @Configuration
 public class MongoConfig {
     // Inyectamos la URL de Mongo desde application.properties
-    @Value("${spring.data.mongodb.uri}")
+    @Value("${MONGO_URL}")
     private String mongoUri;
 
     @Bean
