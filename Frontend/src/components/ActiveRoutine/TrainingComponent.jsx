@@ -133,11 +133,11 @@ export default function TrainingComponent() {
                     console.log("Datos enviados: ", routineDayDTOSingleExercise);
                     await updateWorkoutProgress(routineDayDTOSingleExercise, token);
                 }
-                else {
-                    routineDayDTO.exercises.push(currentData);
-                    console.log("Datos enviados: ", routineDayDTO);
-                    await updateWorkoutProgress(routineDayDTO, token);
-                }
+            }
+            if (actualExerciseIndex > 0) {
+                routineDayDTO.exercises.push(currentData);
+                console.log("Datos enviados: ", routineDayDTO);
+                await updateWorkoutProgress(routineDayDTO, token);
             }
 
             notify("Entrenamiento guardado correctamente", "success");
@@ -230,7 +230,7 @@ export default function TrainingComponent() {
                         </div>
 
                         <div className="flex justify-center items-center mt-8">
-                            {actualExerciseIndex > 0 || (actualExerciseIndex == 0 && todayExercises?.exercises.length == 1) && (
+                            {(actualExerciseIndex > 0 || (actualExerciseIndex == 0 && todayExercises?.exercises.length == 1)) && (
                                 <button
                                     className="px-6 py-1 rounded bg-gradient-to-r from-blue-950 via-gray-600 to-red-800"
                                     onClick={handleFinishWorkout}
