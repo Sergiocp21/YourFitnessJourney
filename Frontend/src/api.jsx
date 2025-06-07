@@ -55,8 +55,7 @@ export const updateUserInfo = async (token, updatedUser) => {
             "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
         },
-    }).then((response) => response.data)
-        .catch((error) => console.log("Error updating user data:", error));
+    });
 
 
 }
@@ -181,6 +180,7 @@ export const updateWorkoutProgress = async (routineDayDTO, token) => {
         const response = await api.put("/routine/updateTodayWorkout", routineDayDTO, {
             headers: {
                 Authorization: token ? `Bearer ${token}` : "",
+                'Content-Type': 'application/json'
             }
         });
         return response.data;

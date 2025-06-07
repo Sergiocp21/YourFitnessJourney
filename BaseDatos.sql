@@ -24,8 +24,7 @@ CREATE TABLE exercises (
         'CLASES',
         'CROSSFIT',
         'ABS',
-        'DESCANSO',
-        'OTROS'
+        'ESTIRAMIENTOS',
     ),
     media_url VARCHAR(255),
 );

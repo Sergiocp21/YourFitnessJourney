@@ -4,8 +4,8 @@ public class UpdateUserInfoDTO {
     private String name;
     private String email;
     private String pictureUrl;
-    private int weight;
-    private int height;
+    private double weight;
+    private double height;
 
 
 
@@ -21,11 +21,11 @@ public class UpdateUserInfoDTO {
         return pictureUrl;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 }
