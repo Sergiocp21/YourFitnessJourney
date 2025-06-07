@@ -1,4 +1,4 @@
-package com.your_fitness_journey.backend.Security;
+/*package com.your_fitness_journey.backend.Security;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -52,4 +52,4 @@ public class MongoConfig {
         return MongoClients.create(settings);
     }
 
-}
+}*/
