@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Permite el acceso sin autenticación a tus endpoints de acceso y conteo de usuarios.
-                        .requestMatchers("/users/access", "/users/getUserCount", "/exercises/byMuscleGroup", "/exercises/types").permitAll()
+                        .requestMatchers("/users/access", "/users/getUserCount", "/exercises/byMuscleGroup", "/exercises/types", "/.well-known/acme-challenge/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Añade tu filtro JWT antes del filtro de autenticación de usuario/contraseña de Spring
