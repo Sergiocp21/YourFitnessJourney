@@ -32,7 +32,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of("http://localhost:5173", "https://yourfitnessjourney.fit"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         source.registerCorsConfiguration("/**", config); // Aplica esta configuración a todas las rutas
         return new CorsFilter(source);
     }
@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Permite el acceso sin autenticación a tus endpoints de acceso y conteo de usuarios.
-                        .requestMatchers("/users/access", "/users/getUserCount").permitAll()
+                        .requestMatchers("/users/access", "/users/getUserCount", "/exercises/byMuscleGroup", "/exercises/types").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Añade tu filtro JWT antes del filtro de autenticación de usuario/contraseña de Spring

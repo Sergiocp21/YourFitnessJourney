@@ -41,8 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtils.getSubjectFromToken(jwt); // Obtiene el Google ID del JWT
             } catch (Exception e) {
-                // Esto puede ocurrir si el token es inválido o ha expirado
-                System.err.println("Error al parsear o validar el JWT: " + e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid or expired token");
+                return;
             }
         }
 
