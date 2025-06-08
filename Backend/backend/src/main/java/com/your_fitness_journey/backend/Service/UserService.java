@@ -4,14 +4,13 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.your_fitness_journey.backend.Model.JPA.Users.UpdateUserInfoDTO;
 import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import com.your_fitness_journey.backend.Repository.JPA.IUserRepository;
-
+import com.your_fitness_journey.backend.Security.JWT.JwtUtils;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import com.your_fitness_journey.backend.Security.JWT.JwtUtils;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -27,7 +26,13 @@ public class UserService {
     public UserService(IUserRepository userRepository, JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
         this.userRepository = userRepository;
-        refreshUserCount();
+    }
+
+    @PostConstruct
+    public void init() {
+        // Esto se ejecutará después de que Hibernate haya creado las tablas
+        long count = refreshUserCount();
+        System.out.println("Users en la base de datos: " + count);
     }
 
     public String loginUser(GoogleIdToken idToken) {

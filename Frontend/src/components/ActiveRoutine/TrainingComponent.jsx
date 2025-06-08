@@ -22,7 +22,6 @@ export default function TrainingComponent() {
     const fetchToday = useCallback(async () => {
         const exercises = await getTodayExercises(token);
         setTodayExercises(exercises);
-        console.log(exercises);
         const initialData = {};
         exercises.exercises.forEach((ex) => {
             initialData[ex.id] = {
@@ -102,7 +101,7 @@ export default function TrainingComponent() {
     const handleFinishWorkout = async () => {
         try {
             const routineDayDTO = getExerciseDataFromStorage();
-            if (!routineDayDTO) {
+            if (!routineDayDTO && actualExerciseIndex !== 0) {
                 notify("No hay datos para enviar al backend.", "error");
                 return;
             }
@@ -127,12 +126,17 @@ export default function TrainingComponent() {
                 return;
             } else {
                 // Si ambos campos están rellenos, añadir el ejercicio actual al array
-                console.log(currentData);
+                if (actualExerciseIndex === 0) { //Si es el primer ejercicio de la rutina
+                    let routineDayDTOSingleExercise = new RoutineDayDTO(todayExercises.order, todayExercises.name, []);
+                    routineDayDTOSingleExercise.exercises.push(currentData);
+                    await updateWorkoutProgress(routineDayDTOSingleExercise, token);
+                }
+            }
+            if (actualExerciseIndex > 0) {
                 routineDayDTO.exercises.push(currentData);
+                await updateWorkoutProgress(routineDayDTO, token);
             }
 
-            console.log("Datos enviados: ", routineDayDTO);
-            await updateWorkoutProgress(routineDayDTO, token);
             notify("Entrenamiento guardado correctamente", "success");
 
             clearExerciseDataFromStorage();
@@ -166,7 +170,6 @@ export default function TrainingComponent() {
     };
 
     const actualExercise = todayExercises?.exercises[actualExerciseIndex];
-    console.log(todayExercises);
     return (
         <div className="text-center space-y-6">
             <h2 className="text-2xl font-semibold">Tu entrenamiento de hoy</h2>
@@ -224,7 +227,7 @@ export default function TrainingComponent() {
                         </div>
 
                         <div className="flex justify-center items-center mt-8">
-                            {actualExerciseIndex > 0 && (
+                            {(actualExerciseIndex > 0 || (actualExerciseIndex == 0 && todayExercises?.exercises.length == 1)) && (
                                 <button
                                     className="px-6 py-1 rounded bg-gradient-to-r from-blue-950 via-gray-600 to-red-800"
                                     onClick={handleFinishWorkout}

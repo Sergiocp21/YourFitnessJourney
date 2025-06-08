@@ -10,6 +10,5 @@ public enum MuscleGroup {
     CLASES,
     CROSSFIT,
     ABS,
-    DESCANSO,
-    OTROS;
+    ESTIRAMIENTOS,
 }
