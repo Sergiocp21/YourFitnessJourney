@@ -11,6 +11,7 @@ const ExerciseSelector = ({ onSelect }) => {
     const [sets, setSets] = useState("");
 
     const scrollRef = useRef(null);
+    const setsInputRef = useRef(null); // Ref para el input de sets
 
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
@@ -62,6 +63,13 @@ const ExerciseSelector = ({ onSelect }) => {
         };
     }, [muscleGroups]);
 
+    useEffect(() => {
+        if (selectedExercise) {
+            // Esperar a que el input se monte y luego hacer foco
+            setsInputRef.current?.focus();
+        }
+    }, [selectedExercise]);
+
     const handleExerciseClick = (exercise) => {
         setSelectedExercise(exercise);
     };
@@ -71,14 +79,12 @@ const ExerciseSelector = ({ onSelect }) => {
             // Añadir ejercicio con el número de sets
             onSelect({ ...selectedExercise, sets: parseInt(sets) });
             setSelectedExercise(null);
-            setSets("");  // Limpiar el campo de sets después de añadir el ejercicio
+            setSets(""); // Limpiar el campo de sets después de añadir el ejercicio
         } else {
             // Opcional: Mostrar un mensaje si no es válido
             notify("Por favor, ingrese un número válido de sets.", "error");
         }
     };
-
-
 
     const scrollLeft = () => {
         scrollRef.current?.scrollBy({ left: -200, behavior: "smooth" });
@@ -111,8 +117,8 @@ const ExerciseSelector = ({ onSelect }) => {
                             key={group}
                             onClick={() => setSelectedGroup(group)}
                             className={`whitespace-nowrap cursor-pointer py-2 px-4 border rounded  ${selectedGroup === group
-                                ? "bg-blue-500 text-white"
-                                : "bg-white text-black"
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-white text-black"
                                 }`}
                         >
                             {group}
@@ -148,7 +154,9 @@ const ExerciseSelector = ({ onSelect }) => {
             {selectedExercise && (
                 <div className="mt-4 bg-gray-700 p-4 rounded w-full">
                     <h3 className="text-xl font-semibold">{selectedExercise.name}</h3>
-                    <p className="mt-2"><strong>Descripción:</strong> {selectedExercise.description}</p>
+                    <p className="mt-2">
+                        <strong>Descripción:</strong> {selectedExercise.description}
+                    </p>
 
                     {selectedExercise.image && (
                         <img
@@ -159,7 +167,9 @@ const ExerciseSelector = ({ onSelect }) => {
                     )}
 
                     <div className="mt-4">
-                        <label className="block text-white mb-1" htmlFor="sets">Número de sets:</label>
+                        <label className="block text-white mb-1" htmlFor="sets">
+                            Número de sets:
+                        </label>
                         <input
                             type="number"
                             id="sets"
@@ -167,6 +177,7 @@ const ExerciseSelector = ({ onSelect }) => {
                             className="w-full px-3 py-2 rounded bg-white text-black"
                             value={sets}
                             onChange={(e) => setSets(e.target.value)}
+                            ref={setsInputRef} // Asignar el ref al input
                         />
                     </div>
 
@@ -178,7 +189,6 @@ const ExerciseSelector = ({ onSelect }) => {
                     </button>
                 </div>
             )}
-
         </div>
     );
 };
