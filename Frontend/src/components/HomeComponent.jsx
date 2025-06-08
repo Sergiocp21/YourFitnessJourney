@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router";
+
 function HomeComponent() {
     const navigate = useNavigate();
+
     function goToRoutines() {
         navigate("/routines");
     }
@@ -14,24 +16,25 @@ function HomeComponent() {
     }
 
     return (
-        <div>
-            <h1>Bienvenido</h1>
-            <div className="grid grid-cols-2 gap-4 pt-72">
-                <button className="px-4 py-2 button" onClick={goToTodayRoutine}>
-                    <span>Entrenamiento de hoy</span>
-                </button>
-                <button className="px-4 py-2 button">
-                    <span>Calendario</span>
-                </button>
-                <button className="px-4 py-2 button" onClick={goToRoutines}>
-                    <span>Rutinas</span>
-                </button>
-                <button className="w-full px-4 py-2 button" onClick={goToStatistics}>
-                    <span className="relative z-10">Estadísticas</span>
-                </button>
-
+        <div className="flex flex-col items-center justify-center h-screen">
+            <h1 className="text-4xl font-bold mb-12">Bienvenido</h1>
+            <div className="relative w-full max-w-md">
+                {/* Upper buttons */}
+                <div className="flex justify-between mb-8">
+                    <button className="px-4 py-2 w-40 button" onClick={goToRoutines}>
+                        <span>Rutinas</span>
+                    </button>
+                    <button className="px-4 py-2 w-40 button" onClick={goToStatistics}>
+                        <span>Estadísticas</span>
+                    </button>
+                </div>
+                {/* Lower buttons */}
+                <div className="flex justify-center">
+                    <button className="px-4 py-2 w-40 button" onClick={goToTodayRoutine}>
+                        <span>Entrenamiento de hoy</span>
+                    </button>
+                </div>
             </div>
-
         </div>
     );
 }

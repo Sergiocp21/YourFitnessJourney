@@ -14,7 +14,6 @@ const CreateRoutineComponent = ({ goBack, initialRoutine, setView }) => {
 
     useEffect(() => {
         if (initialRoutine) {
-            console.log(initialRoutine);
             const loadedDays = initialRoutine.days.map((day) => ({
                 ...day,
                 id: crypto.randomUUID(), // ID local único
@@ -70,7 +69,6 @@ const CreateRoutineComponent = ({ goBack, initialRoutine, setView }) => {
 
         try {
             if (initialRoutine) {
-                console.log(routine);
                 await updateRoutine(routine, jwt);
                 notify("Rutina actualizada con éxito", "success");
                 setView("my");

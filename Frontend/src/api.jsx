@@ -2,8 +2,7 @@ import axios from "axios";
 
 
 export const api = axios.create({
-    baseURL: "https://api.yourfitnessjourney.fit",
-    //baseURL: "http://localhost:8080",
+    baseURL: import.meta.env.VITE_REACT_APP_API_URL,
 });
 
 

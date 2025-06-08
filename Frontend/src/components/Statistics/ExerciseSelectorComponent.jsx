@@ -19,7 +19,7 @@ function ExerciseSelectorComponent() {
     return (
         <div className="p-6 text-white flex flex-col max-h-[70vh]">
             <h1 className="text-3xl font-bold mb-4">Tus Ejercicios</h1>
-            <ul className="space-y-2 overflow-y-auto max-h-[400px]">
+            <ul className="space-y-2 overflow-y-auto max-h-1/2 pt-6">
                 {exercises.map((exercise) => (
                     <li
                         key={exercise.id}

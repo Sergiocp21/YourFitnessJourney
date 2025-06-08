@@ -10,8 +10,7 @@ function GoogleLoginButton() {
     const onSuccess = async (credentialResponse) => {
         try {
             const response = await axios.post(
-                "https://api.yourfitnessjourney.fit/users/access",
-                //"http://localhost:8080/users/access",
+                `${import.meta.env.VITE_REACT_APP_API_URL}/users/access`,
                 credentialResponse.credential,
                 {
                     headers: {

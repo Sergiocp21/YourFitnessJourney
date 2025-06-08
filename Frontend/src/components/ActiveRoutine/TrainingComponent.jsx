@@ -22,7 +22,6 @@ export default function TrainingComponent() {
     const fetchToday = useCallback(async () => {
         const exercises = await getTodayExercises(token);
         setTodayExercises(exercises);
-        console.log(exercises);
         const initialData = {};
         exercises.exercises.forEach((ex) => {
             initialData[ex.id] = {
@@ -130,13 +129,11 @@ export default function TrainingComponent() {
                 if (actualExerciseIndex === 0) { //Si es el primer ejercicio de la rutina
                     let routineDayDTOSingleExercise = new RoutineDayDTO(todayExercises.order, todayExercises.name, []);
                     routineDayDTOSingleExercise.exercises.push(currentData);
-                    console.log("Datos enviados: ", routineDayDTOSingleExercise);
                     await updateWorkoutProgress(routineDayDTOSingleExercise, token);
                 }
             }
             if (actualExerciseIndex > 0) {
                 routineDayDTO.exercises.push(currentData);
-                console.log("Datos enviados: ", routineDayDTO);
                 await updateWorkoutProgress(routineDayDTO, token);
             }
 

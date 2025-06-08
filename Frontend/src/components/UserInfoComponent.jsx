@@ -14,7 +14,6 @@ function UserInfoComponent() {
             getUserInfo(token)
                 .then((response) => {
                     setUserData(response.data);
-                    console.log(response.data);
                 })
                 .catch((error) => {
                     console.log(error);
@@ -35,7 +34,6 @@ function UserInfoComponent() {
             formData.get("weight"),
             formData.get("height")
         );
-        console.log(JSON.stringify(updatedUser));
         updateUserInfo(token, updatedUser).then((response) => {
             notify("Usuario actualizado correctamente", "success");
             setUserData(response.data);
