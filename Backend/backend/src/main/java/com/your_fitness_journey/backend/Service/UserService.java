@@ -1,8 +1,12 @@
 package com.your_fitness_journey.backend.Service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.your_fitness_journey.backend.Model.JPA.Exercises.ExerciseDayDTO;
+import com.your_fitness_journey.backend.Model.JPA.Routines.RoutineDay;
+import com.your_fitness_journey.backend.Model.JPA.Routines.UserRoutineProgress;
 import com.your_fitness_journey.backend.Model.JPA.Users.UpdateUserInfoDTO;
 import com.your_fitness_journey.backend.Model.JPA.Users.User;
+import com.your_fitness_journey.backend.Model.JPA.Users.UserNameAndTodayRutineNameDTO;
 import com.your_fitness_journey.backend.Repository.JPA.IUserRepository;
 import com.your_fitness_journey.backend.Security.JWT.JwtUtils;
 import jakarta.annotation.PostConstruct;
@@ -13,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,11 +26,13 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final IUserRepository userRepository;
     private long cachedUserCount = 0;
+    private final RoutineService routineService;
 
     @Autowired
-    public UserService(IUserRepository userRepository, JwtUtils jwtUtils) {
+    public UserService(IUserRepository userRepository, RoutineService routineService, JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
         this.userRepository = userRepository;
+        this.routineService = routineService;
     }
 
     @PostConstruct
@@ -98,5 +105,14 @@ public class UserService {
         long count = userRepository.count();
         this.cachedUserCount = count;
         return count;
+    }
+
+    public UserNameAndTodayRutineNameDTO getUserNameAndTodayRoutineName(User user) {
+        Optional<RoutineDay> routineDay = routineService.getTodayRoutine(user);
+        UserNameAndTodayRutineNameDTO userNameAndTodayRutineNameDTO = new UserNameAndTodayRutineNameDTO();
+        routineDay.ifPresent(day -> userNameAndTodayRutineNameDTO.setTodayRoutineName(day.getDayName()));
+        userNameAndTodayRutineNameDTO.setUserName(user.getName());
+
+        return userNameAndTodayRutineNameDTO;
     }
 }

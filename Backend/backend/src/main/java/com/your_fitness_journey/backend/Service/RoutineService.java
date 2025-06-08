@@ -84,50 +84,59 @@ public class RoutineService {
                 .collect(Collectors.toList());
     }
 
-    public ExerciseDayDTO getTodayExercises(User user) {
+    public Optional<RoutineDay> getTodayRoutine(User user){
         UserRoutineProgress activeRoutine = getUserActiveRoutine(user) //User active routine
                 .orElseThrow(() -> new RuntimeException("No hay rutina activa"));
 
-        RoutineDay routineDay = routineDayRepository
-                .findByRoutineAndDayOrder(activeRoutine.getRoutine(), activeRoutine.getCurrentDayOrder())
-                .orElseThrow(() -> new RuntimeException("No se encontró el día actual de la rutina"));
+        return routineDayRepository.findByRoutineAndDayOrder(activeRoutine.getRoutine(), activeRoutine.getCurrentDayOrder());
+    }
 
-        List<UserRoutineDayExercise> exercisesToday = userRoutineDayExerciseRepository.findUserRoutineDayExercisesByRoutineDayOrderByExerciseOrder(routineDay); //Today of active routine
+    public ExerciseDayDTO getTodayExercises(User user) {
 
-        if (exercisesToday.isEmpty()) {
-            throw new RuntimeException("No hay ejercicios asignados para el día actual");
+        Optional<RoutineDay> routineDay = getTodayRoutine(user);
+        if(routineDay.isPresent()) {
+            RoutineDay todayRoutine = routineDay.get();
+            List<UserRoutineDayExercise> exercisesToday = userRoutineDayExerciseRepository.findUserRoutineDayExercisesByRoutineDayOrderByExerciseOrder(todayRoutine); //Today of active routine
+
+            if (exercisesToday.isEmpty()) {
+                throw new RuntimeException("No hay ejercicios asignados para el día actual");
+            }
+
+            ExerciseDayDTO exerciseDayDTO = new ExerciseDayDTO();
+            exerciseDayDTO.setName(todayRoutine.getDayName());
+            exerciseDayDTO.setOrder(todayRoutine.getDayOrder());
+
+            List<ExerciseInfoDTO> exerciseInfoList = new ArrayList<>();
+
+            for (UserRoutineDayExercise entry : exercisesToday) {
+                Exercise exercise = entry.getExercise();
+
+                Optional<UserExercise> optionalUserExercise = exerciseService.getUserExercise(user, exercise);
+
+                UserExercise userEx = optionalUserExercise.orElseGet(() -> { //Inserts in the database the relationship between user and exercise
+                    UserExercise newUserExercise = new UserExercise(user, exercise, null, 0);
+                    return exerciseService.saveUserExercise(newUserExercise);
+                });
+
+                ExerciseInfoDTO dto = new ExerciseInfoDTO();
+                dto.setExerciseId(exercise.getId());
+                dto.setName(exercise.getName());
+                dto.setNumSets(entry.getSets());
+                dto.setOrder(entry.getExerciseOrder());
+                dto.setReps(userEx.getLastReps());
+                dto.setWeight(userEx.getLastWeight());
+                dto.setNotes(userEx.getExerciseNote());
+
+                exerciseInfoList.add(dto);
+            }
+
+            exerciseDayDTO.setExercises(exerciseInfoList);
+            return exerciseDayDTO;
+        }
+        else{
+            throw new RuntimeException("No hay rutina activa");
         }
 
-        ExerciseDayDTO exerciseDayDTO = new ExerciseDayDTO();
-        exerciseDayDTO.setName(routineDay.getDayName());
-        exerciseDayDTO.setOrder(routineDay.getDayOrder());
-
-        List<ExerciseInfoDTO> exerciseInfoList = new ArrayList<>();
-
-        for (UserRoutineDayExercise entry : exercisesToday) {
-            Exercise exercise = entry.getExercise();
-
-            Optional<UserExercise> optionalUserExercise = exerciseService.getUserExercise(user, exercise);
-
-            UserExercise userEx = optionalUserExercise.orElseGet(() -> { //Inserts in the database the relationship between user and exercise
-                UserExercise newUserExercise = new UserExercise(user, exercise, null, 0);
-                return exerciseService.saveUserExercise(newUserExercise);
-            });
-
-            ExerciseInfoDTO dto = new ExerciseInfoDTO();
-            dto.setExerciseId(exercise.getId());
-            dto.setName(exercise.getName());
-            dto.setNumSets(entry.getSets());
-            dto.setOrder(entry.getExerciseOrder());
-            dto.setReps(userEx.getLastReps());
-            dto.setWeight(userEx.getLastWeight());
-            dto.setNotes(userEx.getExerciseNote());
-
-            exerciseInfoList.add(dto);
-        }
-
-        exerciseDayDTO.setExercises(exerciseInfoList);
-        return exerciseDayDTO;
     }
 
     private Optional<UserRoutineProgress> getUserActiveRoutine(User user) {

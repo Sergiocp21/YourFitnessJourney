@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export const api = axios.create({
     baseURL: import.meta.env.VITE_REACT_APP_API_URL,
 });
@@ -42,6 +41,14 @@ export const getUserInfo = async (token) => {
 
 export const getUserNameAndImage = async (token) => {
     return api.get("/users/getUserNameAndImage", {
+        headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+        }
+    });
+}
+
+export const getUserNameAndTodayRoutineName = async (token) => {
+    return api.get("/users/getUserNameAndTodayRoutineName", {
         headers: {
             Authorization: token ? `Bearer ${token}` : "",
         }

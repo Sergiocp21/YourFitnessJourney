@@ -8,6 +8,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.your_fitness_journey.backend.Model.JPA.Users.UpdateUserInfoDTO;
 import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import com.your_fitness_journey.backend.Model.JPA.Users.UserNameAndImageDTO;
+import com.your_fitness_journey.backend.Model.JPA.Users.UserNameAndTodayRutineNameDTO;
 import com.your_fitness_journey.backend.Service.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +94,24 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserNameAndTodayRoutineName")
+    public ResponseEntity<?> getUserNameAndTodayRoutineName(@RequestHeader("Authorization") String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String jwt = authorizationHeader.substring(7);
+            Optional<User> userOptional = userService.getUserFromJWT(jwt);
+            if(userOptional.isPresent()) {
+                UserNameAndTodayRutineNameDTO userNameAndTodayRutineNameDTO = userService.getUserNameAndTodayRoutineName(userOptional.get());
+                return ResponseEntity.ok(userNameAndTodayRutineNameDTO);
+            }
+            else{
+                return ResponseEntity.status(401).body("Invalid token");
+            }
+        }
+        else{
+            return ResponseEntity.status(401).body("Token not found");
+        }
+    }
+
     @GetMapping("/getUserCount")
     public ResponseEntity<Long> getUserCount() {
         return ResponseEntity.ok(userService.getUserCount());
@@ -105,9 +124,7 @@ public class UserController {
             Optional<User> userUpdated = userService.updateUser(jwt, userChanges);
             return userUpdated.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
         }
-        System.out.println("hola");
         return ResponseEntity.status(401).body("Token not found");
-
     }
 
     @GetMapping("/validateToken")
