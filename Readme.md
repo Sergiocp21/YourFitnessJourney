@@ -7,5 +7,5 @@ Documentation [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki
 ## What is Your Fitness Journey?
 This app was created by a sportsman for sportsmen, with the aim of traking your progress and making routines by the most efficent and easy way.
 
-###Hoy it works
+### Hoy it works
 Its so simple, just log in, create your routine and... thats it!, next time you start a workout, open the web and start your workout. Enter your repetitions and weight on each exercise while the app told you whats next.
