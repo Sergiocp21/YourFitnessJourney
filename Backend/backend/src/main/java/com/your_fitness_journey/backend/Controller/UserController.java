@@ -10,7 +10,6 @@ import com.your_fitness_journey.backend.Model.JPA.Users.User;
 import com.your_fitness_journey.backend.Model.JPA.Users.UserNameAndImageDTO;
 import com.your_fitness_journey.backend.Model.JPA.Users.UserNameAndTodayRutineNameDTO;
 import com.your_fitness_journey.backend.Service.UserService;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
